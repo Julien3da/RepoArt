@@ -2,7 +2,7 @@
 //  Models.swift
 //  GroupeArt
 //
-//  Created by Julien Estrada on 05/03/2026.
+//  Created by Matt et Nico on 05/03/2026.
 //
 
 import Foundation
@@ -29,6 +29,7 @@ struct Artist: Identifiable {
     let artistName: String
     let artistCover: String
     let artistPicture: String
+    var artistDescription: String
 }
 
 struct Album: Identifiable {
@@ -46,7 +47,8 @@ struct Track: Identifiable {
     var id = UUID()
     let trackTitle: String
     var trackMark: Double
-    let trackArtist: String
+    let trackArtist: Artist
+    let albumCover: String
 }
 
 //utilisable et pour les concerts et pour les albums
