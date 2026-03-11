@@ -27,7 +27,6 @@ struct User: Identifiable {
 struct Artist: Identifiable {
     var id = UUID()
     let artistName: String
-    let artistCover: String
     let artistPicture: String
     var artistDescription: String
 }
