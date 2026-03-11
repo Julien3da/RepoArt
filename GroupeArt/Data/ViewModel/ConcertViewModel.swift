@@ -13,7 +13,7 @@ class ConcertViewModel {
     private let apiKey: String =
             "patOE0Bk62hEWC6uu.2463aca8589573d9a241d1f41caee3651b50c658023d5bfaa2092de96a1894f3"
         private let baseURL = URL(
-            string: "https://api.airtable.com/v0/appfvBclieq9JmBZF/User"
+            string: "https://api.airtable.com/v0/appfvBclieq9JmBZF/Concert"
         )!
    
     var concerts: [Concert] = []
@@ -30,7 +30,7 @@ class ConcertViewModel {
 
                 do {
                     let decoded = try decoder.decode(ConcertReponse.self, from: data)
-                    let concerts = decoded.records.map { $0.fields }
+                    let concerts = decoded.records.map { $0.fields }.filter { $0.concertTitle != "Sans titre" }
                     self.concerts = concerts
                     return concerts
                 } catch {

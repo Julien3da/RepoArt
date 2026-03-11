@@ -18,9 +18,7 @@ struct FeedView: View {
         NavigationStack {
                             
                 ZStack{
-                    LinearGradient(gradient : Gradient (colors: [.orange, .gris]), startPoint: .bottom, endPoint: .top)
-                        .ignoresSafeArea()
-                        .opacity(0.5)
+                  
                     
                     VStack(alignment: .leading){
                         
