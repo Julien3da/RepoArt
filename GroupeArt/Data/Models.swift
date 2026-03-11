@@ -27,7 +27,6 @@ struct User: Identifiable {
 struct Artist: Identifiable {
     var id = UUID()
     let artistName: String
-    let artistCover: String
     let artistPicture: String
     var artistDescription: String
 }
@@ -55,7 +54,7 @@ struct Track: Identifiable {
 struct Review: Identifiable {
     var id = UUID()
     var reviewTitle: String
-    var mark: Double
+    var markReview: Double
     var user : User
     var userReview: String
 }
@@ -68,4 +67,5 @@ struct Concert: Identifiable {
     let globalReview: Double
     let concertDate: String
     let concertLocation: String
+    let concertHall: String
 }

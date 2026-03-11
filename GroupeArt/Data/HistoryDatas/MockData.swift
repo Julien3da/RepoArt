@@ -19,37 +19,31 @@ enum HistoryFilter : String, CaseIterable, Identifiable {
 let mockArtists: [Artist] = [
     Artist(
         artistName: "Michael Jackson",
-        artistCover: "mjPic",
         artistPicture: "mjPic",
         artistDescription: "Chanteur, danseur et icône mondiale de la pop, surnommé le King of Pop."
     ),
     Artist(
         artistName: "The Beatles",
-        artistCover: "beatlesPic",
         artistPicture: "beatlesPic",
         artistDescription: "Groupe britannique légendaire qui a révolutionné la musique pop et rock dans les années 60."
     ),
     Artist(
         artistName: "Travis Scott",
-        artistCover: "travisPic",
         artistPicture: "travisPic",
         artistDescription: "Rappeur et producteur américain connu pour son univers sombre et ses performances énergiques."
     ),
     Artist(
         artistName: "The Weeknd",
-        artistCover: "weekndPic",
         artistPicture: "weekndPic",
         artistDescription: "Artiste canadien mêlant R&B, pop et synthwave avec une esthétique sombre et cinématographique."
     ),
     Artist(
         artistName: "SZA",
-        artistCover: "szaPic",
         artistPicture: "szaPic",
         artistDescription: "Chanteuse américaine de R&B alternatif reconnue pour ses textes introspectifs et sa voix unique."
     ),
     Artist(
         artistName: "Bruno Mars",
-        artistCover: "brunoPic",
         artistPicture: "brunoPic",
         artistDescription: "Chanteur et performer pop-funk célèbre pour ses hits mondiaux et son style rétro."
     )
@@ -80,7 +74,7 @@ let mockTracks: [Track] = [
     Track(
         trackTitle: "Hotel California",
         trackMark: 4.4,
-        trackArtist: Artist(artistName: "Eagles", artistCover: "hotelCalCover", artistPicture: "eaglesPic", artistDescription: "..."), albumCover: "hotelCalCover"),
+        trackArtist: Artist(artistName: "Eagles", artistPicture: "eaglesPic", artistDescription: "..."), albumCover: "hotelCalCover"),
     Track(
         trackTitle: "Bad",
         trackMark: 4.7,

@@ -1,5 +1,5 @@
 //
-//  AllListlView.swift
+//  AllListView.swift
 //  GroupeArt
 //
 //  Created by Julien Estrada on 10/03/2026.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AllListlView: View {
+struct AllListView: View {
     
     let backgroundGradient = LinearGradient(
         stops: [
@@ -20,40 +20,52 @@ struct AllListlView: View {
     )
     
     var body: some View {
-        
-        
         NavigationStack {
             ZStack {
                 backgroundGradient.ignoresSafeArea()
                 
                 ScrollView {
-                    VStack  {
-                        HStack  {
-                            
+                    VStack {
+                        HStack {
                             ListFavoriteCard(symbol: "menucard", titleFavoriteList: "Albums favoris")
                             ListFavoriteCard(symbol: "music.microphone", titleFavoriteList: "Artistes favoris")
                             ListFavoriteCard(symbol: "music.note.house", titleFavoriteList: "Concert vus")
-                            
                         }
-                        Spacer()
                         
-                        ListCard(title: "Vinyles", images: ["utopiaCover", "thrillerCover", "abbeyRoadCover", "badCover", "hotelCalCover", "sosCover", "hutCover"])
+                        Divider()
+                            .padding(.horizontal)
                         
+                        ListCard(
+                            title: "Tout mes vinyles",
+                            coverList: "listVinyles",
+                            imagesAlbum: ["thrillerCover", "abbeyRoadCover", "badCover", "hotelCalCover", "sosCover", "hutCover"]
+                        )
                         
-                        ListCard(title: "Love", images: ["utopiaCover", "thrillerCover", "abbeyRoadCover"])
+                        ListCard(
+                            title: "Mes albums pour lover",
+                            coverList: "listLove",
+                            imagesAlbum: ["utopiaCover", "thrillerCover", "abbeyRoadCover"]
+                        )
                         
-                        ListCard(title: "Vinyles", images: ["utopiaCover", "thrillerCover", "abbeyRoadCover", "badCover", "hotelCalCover", "sosCover", "hutCover"])
+                        ListCard(
+                            title: "Mes albums en cassettes",
+                            coverList: "listTape",
+                            imagesAlbum: ["utopiaCover", "thrillerCover", "abbeyRoadCover", "badCover", "hotelCalCover", "sosCover"]
+                        )
                         
-                        ListCard(title: "Love", images: ["utopiaCover", "thrillerCover", "abbeyRoadCover"])
-                        
+                        ListCard(
+                            title: "Love",
+                            coverList: "mjPic",
+                            imagesAlbum: ["utopiaCover", "thrillerCover", "abbeyRoadCover"]
+                        )
                     }
                 }
             }
-            .navigationTitle(Text("Listes"))
+            .navigationTitle("Mes listes")
         }
     }
 }
 
 #Preview {
-    AllListlView()
+    AllListView()
 }
