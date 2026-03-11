@@ -32,8 +32,15 @@ struct AllListView: View {
                             }
                             .buttonStyle(.plain)
                             
-                            ListFavoriteCard(symbol: "music.microphone", titleFavoriteList: "Artistes favoris")
-                            ListFavoriteCard(symbol: "music.note.house", titleFavoriteList: "Concert vus")
+                            NavigationLink(destination: ArtistFavoriteDetailView()) {
+                                ListFavoriteCard(symbol: "music.microphone", titleFavoriteList: "Artistes favoris")
+                            }
+                            .buttonStyle(.plain)
+                            
+                            NavigationLink(destination: ConcertFavoriteDetailView()) {
+                                ListFavoriteCard(symbol: "music.note.house", titleFavoriteList: "Concert vus")
+                            }
+                            .buttonStyle(.plain)
                         }
                         
                         
@@ -64,27 +71,21 @@ struct AllListView: View {
 
                         
                         ListCard(
-                            title: "Tout mes vinyles",
+                            title: "Mes vinyles",
                             coverList: "listVinyles",
                             imagesAlbum: ["thrillerCover", "abbeyRoadCover", "badCover", "hotelCalCover", "sosCover", "hutCover"]
                         )
                         
                         ListCard(
-                            title: "Mes albums pour lover",
+                            title: "Albums chill",
                             coverList: "listLove",
                             imagesAlbum: ["utopiaCover", "thrillerCover", "abbeyRoadCover"]
                         )
                         
                         ListCard(
-                            title: "Mes albums en cassettes",
+                            title: "Pour blindtest",
                             coverList: "listTape",
                             imagesAlbum: ["utopiaCover", "thrillerCover", "abbeyRoadCover", "badCover", "hotelCalCover", "sosCover"]
-                        )
-                        
-                        ListCard(
-                            title: "Love",
-                            coverList: "mjPic",
-                            imagesAlbum: ["utopiaCover", "thrillerCover", "abbeyRoadCover"]
                         )
                     }
                 }

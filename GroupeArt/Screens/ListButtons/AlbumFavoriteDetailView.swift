@@ -10,6 +10,15 @@ import SwiftUI
 struct AlbumFavoriteDetailView: View {
 
     @State private var albumVM = AlbumViewModel()
+    @State private var searchText = ""
+
+    private var filteredAlbums: [Album] {
+        guard !searchText.isEmpty else { return albumVM.albums }
+        return albumVM.albums.filter {
+            $0.albumTitle.localizedCaseInsensitiveContains(searchText) ||
+            $0.artistName.localizedCaseInsensitiveContains(searchText)
+        }
+    }
 
     let backgroundGradient = LinearGradient(
         stops: [
@@ -56,7 +65,7 @@ struct AlbumFavoriteDetailView: View {
                             .padding(.top, 40)
                     } else {
                         VStack(spacing: 0) {
-                            ForEach(Array(albumVM.albums.enumerated()), id: \.element.id) { index, album in
+                            ForEach(Array(filteredAlbums.enumerated()), id: \.element.id) { index, album in
                                 NavigationLink(destination: ContentView(specificAlbum: album)) {
                                 VStack(spacing: 0) {
                                     HStack(spacing: 14) {
@@ -84,14 +93,30 @@ struct AlbumFavoriteDetailView: View {
 
                                         Spacer()
 
-                                        // Placeholder pour la cover (pas d'image locale)
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color.gray.opacity(0.2))
+                                        // Cover album depuis l'API
+                                        if let urlString = album.coverURL, let url = URL(string: urlString) {
+                                            AsyncImage(url: url) { image in
+                                                image
+                                                    .resizable()
+                                                    .scaledToFill()
+                                            } placeholder: {
+                                                Color.gray.opacity(0.2)
+                                                    .overlay(
+                                                        Image(systemName: "music.note")
+                                                            .foregroundColor(.gray)
+                                                    )
+                                            }
                                             .frame(width: 60, height: 60)
-                                            .overlay(
-                                                Image(systemName: "music.note")
-                                                    .foregroundColor(.gray)
-                                            )
+                                            .cornerRadius(12)
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color.gray.opacity(0.2))
+                                                .frame(width: 60, height: 60)
+                                                .overlay(
+                                                    Image(systemName: "music.note")
+                                                        .foregroundColor(.gray)
+                                                )
+                                        }
 
                                         Image(systemName: "chevron.right")
                                             .font(.system(size: 14, weight: .semibold))
@@ -100,7 +125,7 @@ struct AlbumFavoriteDetailView: View {
                                     .padding(.horizontal, 20)
                                     .padding(.vertical, 14)
 
-                                    if index < albumVM.albums.count - 1 {
+                                    if index < filteredAlbums.count - 1 {
                                         Divider()
                                             .padding(.horizontal, 20)
                                     }
@@ -119,6 +144,7 @@ struct AlbumFavoriteDetailView: View {
                 }
             }
         }
+        .searchable(text: $searchText, prompt: "Rechercher un album ou artiste")
         .task {
             do {
                 _ = try await albumVM.fetchAlbums()

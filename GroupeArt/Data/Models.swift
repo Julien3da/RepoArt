@@ -8,6 +8,32 @@
 import Foundation
 
 
+// MARK: - Airtable Attachment (images)
+
+struct AirtableThumbnail: Codable {
+    let url: String
+    let width: Int?
+    let height: Int?
+}
+
+struct AirtableThumbnails: Codable {
+    let small: AirtableThumbnail?
+    let large: AirtableThumbnail?
+    let full: AirtableThumbnail?
+}
+
+struct AirtableAttachment: Codable {
+    let url: String
+    let filename: String?
+    let thumbnails: AirtableThumbnails?
+
+    /// URL optimisée : thumbnail large si dispo, sinon URL originale
+    var imageURL: String {
+        thumbnails?.large?.url ?? url
+    }
+}
+
+
 // MARK: - Airtable Response Wrappers
 
 struct UserReponse: Codable {
@@ -75,11 +101,28 @@ struct User: Identifiable, Codable {
 
 struct Artist: Identifiable, Codable {
     var id = UUID()
-    let artistName: String
-    let artistDescription: String?
+    var artistName: String = "Artiste inconnu"
+    var artistDescription: String? = nil
+    var artistPicture: [AirtableAttachment]? = nil
+
+    var pictureURL: String? {
+        artistPicture?.first?.imageURL
+    }
 
     private enum CodingKeys: String, CodingKey {
-        case artistName, artistDescription
+        case artistName, artistDescription, artistPicture
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.artistName = (try? container.decode(String.self, forKey: .artistName)) ?? "Artiste inconnu"
+        self.artistDescription = try? container.decode(String.self, forKey: .artistDescription)
+        self.artistPicture = try? container.decode([AirtableAttachment].self, forKey: .artistPicture)
+    }
+
+    init(artistName: String = "Artiste inconnu", artistDescription: String? = nil) {
+        self.artistName = artistName
+        self.artistDescription = artistDescription
     }
 }
 
@@ -99,6 +142,8 @@ struct Album: Identifiable, Codable {
     var userReviewFromTopReview: [String]? = nil
     var usernameFromTopReview: [String]? = nil
     var trackMarkFromTracks: [Int]? = nil
+    var albumCover: [AirtableAttachment]? = nil
+    var artistPictureFromArtist: [AirtableAttachment]? = nil
 
     // Computed helpers pour l'affichage
     var artistName: String {
@@ -110,6 +155,14 @@ struct Album: Identifiable, Codable {
         return Double(marks.reduce(0, +)) / Double(marks.count)
     }
 
+    var coverURL: String? {
+        albumCover?.first?.imageURL
+    }
+
+    var artistPicURL: String? {
+        artistPictureFromArtist?.first?.imageURL
+    }
+
     private enum CodingKeys: String, CodingKey {
         case albumTitle
         case yearRelease
@@ -119,6 +172,8 @@ struct Album: Identifiable, Codable {
         case userReviewFromTopReview = "userReview (from topReview)"
         case usernameFromTopReview = "username (from user) (from topReview)"
         case trackMarkFromTracks = "trackMark (from tracks)"
+        case albumCover
+        case artistPictureFromArtist = "artistPicture (from Artist)"
     }
 
     init(from decoder: Decoder) throws {
@@ -131,6 +186,8 @@ struct Album: Identifiable, Codable {
         self.userReviewFromTopReview = try? container.decode([String].self, forKey: .userReviewFromTopReview)
         self.usernameFromTopReview = try? container.decode([String].self, forKey: .usernameFromTopReview)
         self.trackMarkFromTracks = try? container.decode([Int].self, forKey: .trackMarkFromTracks)
+        self.albumCover = try? container.decode([AirtableAttachment].self, forKey: .albumCover)
+        self.artistPictureFromArtist = try? container.decode([AirtableAttachment].self, forKey: .artistPictureFromArtist)
     }
 
     // Init local pour MockData
@@ -184,18 +241,41 @@ struct Review: Identifiable, Codable {
 
 struct Concert: Identifiable, Codable {
     var id = UUID()
-    let concertTitle: String
-    let concertDate: String?
-    let concertLocation: String?
-    let concertHall: String?
-    let artistNameFromArtist: [String]?
+    var concertTitle: String = "Sans titre"
+    var concertDate: String? = nil
+    var concertLocation: String? = nil
+    var concertHall: String? = nil
+    var artistNameFromArtist: [String]? = nil
+    var concertCover: [AirtableAttachment]? = nil
     
     var artistName: String {
         artistNameFromArtist?.first ?? "Artiste inconnu"
     }
+
+    var coverURL: String? {
+        concertCover?.first?.imageURL
+    }
     
     private enum CodingKeys: String, CodingKey {
-        case concertTitle, concertDate, concertLocation, concertHall
+        case concertTitle, concertDate, concertLocation, concertHall, concertCover
         case artistNameFromArtist = "artistName (from artist)"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.concertTitle = (try? c.decode(String.self, forKey: .concertTitle)) ?? "Sans titre"
+        self.concertDate = try? c.decode(String.self, forKey: .concertDate)
+        self.concertLocation = try? c.decode(String.self, forKey: .concertLocation)
+        self.concertHall = try? c.decode(String.self, forKey: .concertHall)
+        self.artistNameFromArtist = try? c.decode([String].self, forKey: .artistNameFromArtist)
+        self.concertCover = try? c.decode([AirtableAttachment].self, forKey: .concertCover)
+    }
+
+    init(concertTitle: String = "Sans titre", concertDate: String? = nil, concertLocation: String? = nil, concertHall: String? = nil, artistNameFromArtist: [String]? = nil) {
+        self.concertTitle = concertTitle
+        self.concertDate = concertDate
+        self.concertLocation = concertLocation
+        self.concertHall = concertHall
+        self.artistNameFromArtist = artistNameFromArtist
     }
 }

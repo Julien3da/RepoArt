@@ -17,21 +17,28 @@ struct ContentView: View {
             if let album = displayedAlbum {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 18) {
-                        // Placeholder pour l'image artiste
-                        RoundedRectangle(cornerRadius: 80)
-                            .fill(Color.gray.opacity(0.3))
+                        // Cover album en grand en haut
+                        if let urlString = album.coverURL, let url = URL(string: urlString) {
+                            AsyncImage(url: url) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                            } placeholder: {
+                                Color.gray.opacity(0.3)
+                                    .overlay(ProgressView())
+                            }
                             .frame(height: 320)
-                            .overlay(
-                                VStack {
-                                    Image(systemName: "music.mic")
+                            .clipShape(RoundedRectangle(cornerRadius: 80))
+                        } else {
+                            RoundedRectangle(cornerRadius: 80)
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: 320)
+                                .overlay(
+                                    Image(systemName: "music.note")
                                         .font(.system(size: 60))
                                         .foregroundColor(.gray)
-                                    Text(album.artistName)
-                                        .font(.title2)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.gray)
-                                }
-                            )
+                                )
+                        }
 
                         HeaderCardView(album: album)
 
@@ -104,15 +111,28 @@ struct HeaderCardView: View {
 
                 Spacer()
 
-                // Placeholder cover
-                RoundedRectangle(cornerRadius: 28)
-                    .fill(Color.gray.opacity(0.2))
+                // Photo artiste en carré à droite
+                if let urlString = album.artistPicURL, let url = URL(string: urlString) {
+                    AsyncImage(url: url) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } placeholder: {
+                        Color.gray.opacity(0.2)
+                            .overlay(ProgressView())
+                    }
                     .frame(width: 145, height: 145)
-                    .overlay(
-                        Image(systemName: "music.note")
-                            .font(.system(size: 40))
-                            .foregroundColor(.gray)
-                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 28))
+                } else {
+                    RoundedRectangle(cornerRadius: 28)
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(width: 145, height: 145)
+                        .overlay(
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 40))
+                                .foregroundColor(.gray)
+                        )
+                }
             }
             .padding(24)
         }

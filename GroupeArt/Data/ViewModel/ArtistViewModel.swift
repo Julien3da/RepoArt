@@ -30,7 +30,7 @@ class ArtistViewModel {
 
                 do {
                     let decoded = try decoder.decode(ArtistReponse.self, from: data)
-                    let artists = decoded.records.map { $0.fields }
+                    let artists = decoded.records.map { $0.fields }.filter { $0.artistName != "Artiste inconnu" }
                     self.artists = artists
                     return artists
                 } catch {

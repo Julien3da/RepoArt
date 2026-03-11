@@ -30,7 +30,7 @@ class ConcertViewModel {
 
                 do {
                     let decoded = try decoder.decode(ConcertReponse.self, from: data)
-                    let concerts = decoded.records.map { $0.fields }
+                    let concerts = decoded.records.map { $0.fields }.filter { $0.concertTitle != "Sans titre" }
                     self.concerts = concerts
                     return concerts
                 } catch {
