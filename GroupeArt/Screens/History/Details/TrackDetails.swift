@@ -16,6 +16,7 @@ struct TrackDetails: View {
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
+                .frame(maxWidth : .infinity, maxHeight: .infinity)
                 .blur(radius: 30)
             VStack {
                 VStack {
@@ -41,7 +42,6 @@ struct TrackDetails: View {
                         RoundedRectangle(cornerRadius: 28)
                             .fill(.ultraThinMaterial)
                         
-                        // fine bordure brillante pour accentuer l'effet "verre"
                         RoundedRectangle(cornerRadius: 28)
                             .stroke(Color.white.opacity(0.2), lineWidth: 1)
                     }
@@ -49,6 +49,7 @@ struct TrackDetails: View {
                 .background(Color.grisArt.opacity(0.1))
                 .cornerRadius(28)
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                // Boutons Apple Music / Spotify
                     .padding()
                 AppleMusicButton()
                     .padding()
@@ -59,5 +60,5 @@ struct TrackDetails: View {
 }
 
 #Preview {
-    TrackDetails(track: mockTracks[0])
+    TrackDetails(track: mockTracks[5])
 }
