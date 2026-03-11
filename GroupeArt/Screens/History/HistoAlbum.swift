@@ -1,5 +1,5 @@
 //
-//  HistoAlbumCard.swift
+//  HistoAlbum.swift
 //  GroupeArt
 //
 //  Created by FUVE on 10/03/2026.
@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct HistoAlbumCard: View {
+struct HistoAlbum: View {
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    HistoAlbumCard()
+    HistoAlbum()
 }
