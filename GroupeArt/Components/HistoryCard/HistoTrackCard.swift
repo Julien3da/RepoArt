@@ -1,7 +1,11 @@
+//
+//  HistoTrackCard.swift
 //  GroupeArt
 //
-//  Created by FUVE on 05/03/2026.
+//  Created by FUVE on 11/03/2026.
 //
+
+import SwiftUI
 
 import SwiftUI
 
@@ -41,6 +45,7 @@ struct HistoTrackCard: View {
                     .stroke(Color.white.opacity(0.2), lineWidth: 1)
             }
         )
+        .background(Color.grisArt.opacity(0.1))
         .background(Color.grisArt.opacity(0.75))
         .cornerRadius(28)
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
@@ -48,5 +53,6 @@ struct HistoTrackCard: View {
 }
 
 #Preview {
-    HistoTrackCard(track: mockTracks[1])
+    HistoTrackCard(track: mockTracks[0])
 }
+
