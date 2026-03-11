@@ -74,7 +74,7 @@ let mockTracks: [Track] = [
     Track(
         trackTitle: "Hotel California",
         trackMark: 4.4,
-        trackArtist: Artist(artistName: "Eagles", artistCover: "hotelCalCover", artistPicture: "eaglesPic", artistDescription: "..."), albumCover: "hotelCalCover"),
+        trackArtist: Artist(artistName: "Eagles", artistPicture: "eaglesPic", artistDescription: "..."), albumCover: "hotelCalCover"),
     Track(
         trackTitle: "Bad",
         trackMark: 4.7,

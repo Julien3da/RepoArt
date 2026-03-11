@@ -151,14 +151,4 @@ struct Concert: Identifiable, Codable {
     let concertDate: String
     let concertLocation: String
     let concertHall: String
-    
-    private enum CodingKeys: String, CodingKey {
-        case concertTitle
-        case artist
-        case concertCover
-        case globalReview
-        case concertDate
-        case concertLocation
-        case concertHall
-    }
 }

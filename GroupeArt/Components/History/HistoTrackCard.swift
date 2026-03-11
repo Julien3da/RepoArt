@@ -41,12 +41,12 @@ struct HistoTrackCard: View {
                     .stroke(Color.white.opacity(0.2), lineWidth: 1)
             }
         )
-        .background(Color.grisArt.opacity(0.1))
+        .background(Color.grisArt.opacity(0.75))
         .cornerRadius(28)
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
     }
 }
 
 #Preview {
-    HistoTrackCard(track: mockTracks[0])
+    HistoTrackCard(track: mockTracks[1])
 }
