@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct HistoTrack: View {
+    
+    @State var viewModel = TrackViewModel()
 
     let backgroundGradient = LinearGradient(
             stops: [
@@ -26,7 +28,7 @@ struct HistoTrack: View {
                 
                 ScrollView {
                     VStack(spacing: 16) {
-                        ForEach(mockTracks) { track in
+                        ForEach(viewModel.tracks) { track in
                             HistoTrackCard(track: track)
                         }
                     }
@@ -34,6 +36,9 @@ struct HistoTrack: View {
                 }
             }
             .navigationTitle("Historique") // à enlever de la scroll
+        }
+        .task {
+            try? await viewModel.fetchTracks()
         }
     }
 }
