@@ -27,7 +27,11 @@ struct AllListView: View {
                 ScrollView {
                     VStack {
                         HStack {
-                            ListFavoriteCard(symbol: "menucard", titleFavoriteList: "Albums favoris")
+                            NavigationLink(destination: AlbumFavoriteDetailView()) {
+                                ListFavoriteCard(symbol: "menucard", titleFavoriteList: "Albums favoris")
+                            }
+                            .buttonStyle(.plain)
+                            
                             ListFavoriteCard(symbol: "music.microphone", titleFavoriteList: "Artistes favoris")
                             ListFavoriteCard(symbol: "music.note.house", titleFavoriteList: "Concert vus")
                         }

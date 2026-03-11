@@ -14,18 +14,28 @@ struct HistoTrackCard: View {
                 Text(track.trackTitle)
                     .font(.title3)
                     .fontWeight(.semibold)
-                Text(track.trackArtist.artistName)
-                    .fontWeight(.thin)
+                if let mark = track.trackMark {
+                    HStack(spacing: 4) {
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(.orange)
+                        Text("\(mark) / 5")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
             .padding(.leading)
             
             Spacer()
             
-            Image(track.albumCover)
-                .resizable()
-                .scaledToFill()
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.gray.opacity(0.2))
                 .frame(width: 55, height: 55)
-                .cornerRadius(12)
+                .overlay(
+                    Image(systemName: "music.note")
+                        .foregroundColor(.gray)
+                )
                 .padding(.trailing)
         }
         .frame(width: 360, height: 84)

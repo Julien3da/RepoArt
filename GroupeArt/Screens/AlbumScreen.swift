@@ -1,45 +1,78 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State private var albumVM = AlbumViewModel()
+    var specificAlbum: Album? = nil
+    
+    private var displayedAlbum: Album? {
+        specificAlbum ?? albumVM.randomAlbum
+    }
+    
     var body: some View {
         ZStack {
             Color(red: 0.8, green: 0.8, blue: 0.8)
                 .ignoresSafeArea()
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 18) {
-                    Image("rondoudouPicture")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(height: 320)
-                        .clipShape(RoundedRectangle(cornerRadius: 80))
+            if let album = displayedAlbum {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 18) {
+                        // Placeholder pour l'image artiste
+                        RoundedRectangle(cornerRadius: 80)
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(height: 320)
+                            .overlay(
+                                VStack {
+                                    Image(systemName: "music.mic")
+                                        .font(.system(size: 60))
+                                        .foregroundColor(.gray)
+                                    Text(album.artistName)
+                                        .font(.title2)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.gray)
+                                }
+                            )
 
-                    HeaderCardView()
+                        HeaderCardView(album: album)
 
-                    HStack(spacing: 12) {
-                        ActionButtonView(
-                            title: "Tu as mis 4 / 5",
-                            backgroundColor: Color.orange,
-                            textColor: .black) {}
+                        HStack(spacing: 12) {
+                            ActionButtonView(
+                                title: String(format: "Note : %.1f / 5", album.globalReview),
+                                backgroundColor: Color.orange,
+                                textColor: .black) {}
 
-                        ActionButtonView(
-                            title: "Partager",
-                            backgroundColor: Color.black.opacity(0.8),
-                            textColor: .white) {}
+                            ActionButtonView(
+                                title: "Partager",
+                                backgroundColor: Color.black.opacity(0.8),
+                                textColor: .white) {}
+                        }
+                        .padding(.horizontal, 24)
+
+                        TracklistCardView(album: album) {}
+
+                        ReviewsCardView(album: album)
                     }
-                    .padding(.horizontal, 24)
-
-                    TracklistCardView {}
-
-                    ReviewsCardView()
+                    .padding(.bottom, 24)
                 }
-                .padding(.bottom, 24)
+            } else {
+                ProgressView("Chargement d'un album…")
+            }
+        }
+        .task {
+            if specificAlbum == nil {
+                do {
+                    try await albumVM.fetchRandomAlbum()
+                } catch {
+                    print("Erreur: \(error)")
+                }
             }
         }
     }
 }
 
 struct HeaderCardView: View {
+    let album: Album
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 30)
@@ -48,32 +81,38 @@ struct HeaderCardView: View {
 
             HStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Bouboule")
+                    Text(album.albumTitle)
                         .font(.system(size: 28, weight: .bold))
 
-                    Text("Rondoudou")
+                    Text(album.artistName)
                         .font(.system(size: 17))
                         .foregroundColor(.gray)
 
                     HStack(spacing: 6) {
                         Image(systemName: "star.fill")
                             .foregroundColor(.orange)
-                        Text("4,6")
+                        Text(String(format: "%.1f", album.globalReview))
                             .font(.system(size: 18, weight: .bold))
                     }
 
-                    Text("Septembre 1969")
-                        .font(.system(size: 16))
-                        .foregroundColor(.black.opacity(0.65))
+                    if let year = album.yearRelease {
+                        Text(year)
+                            .font(.system(size: 16))
+                            .foregroundColor(.black.opacity(0.65))
+                    }
                 }
 
                 Spacer()
 
-                Image("rondoudouCover")
-                    .resizable()
-                    .scaledToFill()
+                // Placeholder cover
+                RoundedRectangle(cornerRadius: 28)
+                    .fill(Color.gray.opacity(0.2))
                     .frame(width: 145, height: 145)
-                    .clipShape(RoundedRectangle(cornerRadius: 28))
+                    .overlay(
+                        Image(systemName: "music.note")
+                            .font(.system(size: 40))
+                            .foregroundColor(.gray)
+                    )
             }
             .padding(24)
         }
@@ -105,16 +144,12 @@ struct ActionButtonView: View {
 }
 
 struct TracklistCardView: View {
+    let album: Album
     let actionVoirAlbum: () -> Void
 
-    let tracks: [(String, String)] = [
-        ("Come Together", "4,7 / 5"),
-        ("Something", "4,7 / 5"),
-        ("Maxwell’s Silver Hammer", "4,7 / 5"),
-        ("Oh! Darling", "4,7 / 5")
-    ]
-
     var body: some View {
+        let trackMarks = album.trackMarkFromTracks ?? []
+        
         ZStack {
             RoundedRectangle(cornerRadius: 30)
                 .fill(Color.white.opacity(0.72))
@@ -127,52 +162,52 @@ struct TracklistCardView: View {
                         .font(.system(size: 24, weight: .black))
                 }
 
-                ForEach(0..<tracks.count, id: \.self) { index in
-                    HStack(alignment: .top) {
-                        Text("\(index + 1)")
-                            .font(.system(size: 20))
-                            .frame(width: 20)
+                if trackMarks.isEmpty {
+                    Text("Aucune track disponible")
+                        .foregroundColor(.secondary)
+                } else {
+                    ForEach(0..<min(trackMarks.count, 6), id: \.self) { index in
+                        HStack(alignment: .top) {
+                            Text("\(index + 1)")
+                                .font(.system(size: 20))
+                                .frame(width: 20)
 
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(tracks[index].0)
-                                .font(.system(size: 19, weight: .bold))
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Piste \(index + 1)")
+                                    .font(.system(size: 19, weight: .bold))
 
-                            Text("pokemon")
-                                .font(.system(size: 15))
-                                .foregroundColor(.orange)
+                                Text(album.artistName)
+                                    .font(.system(size: 15))
+                                    .foregroundColor(.orange)
+                            }
+
+                            Spacer()
+
+                            HStack(spacing: 4) {
+                                Image(systemName: "star.fill")
+                                    .foregroundColor(.orange)
+                                Text("\(trackMarks[index]) / 5")
+                                    .font(.system(size: 17))
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.orange)
+                            }
                         }
 
+                        if index < min(trackMarks.count, 6) - 1 {
+                            Divider()
+                        }
+                    }
+                }
+
+                if trackMarks.count > 6 {
+                    HStack {
                         Spacer()
-
-                        HStack(spacing: 4) {
-                            Image(systemName: "star.fill")
-                                .foregroundColor(.orange)
-                            Text(tracks[index].1)
-                                .font(.system(size: 17))
-                            Text(">")
-                                .foregroundColor(.orange)
-                        }
-                    }
-
-                    if index < tracks.count - 1 {
-                        Divider()
+                        Text("+ \(trackMarks.count - 6) pistes")
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
+                        Spacer()
                     }
                 }
-
-                HStack {
-                    Spacer()
-
-                    ActionButtonView(
-                        title: "Voir tout l’album",
-                        backgroundColor: Color.orange,
-                        textColor: .black,
-                        action: actionVoirAlbum
-                    )
-                    .frame(width: 175)
-
-                    Spacer()
-                }
-                .padding(.top, 8)
             }
             .padding(24)
         }
@@ -181,7 +216,14 @@ struct TracklistCardView: View {
 }
 
 struct ReviewsCardView: View {
+    let album: Album
+    
     var body: some View {
+        let titles = album.reviewTitleFromTopReview ?? []
+        let reviews = album.userReviewFromTopReview ?? []
+        let usernames = album.usernameFromTopReview ?? []
+        let marks = album.markFromTopReview ?? []
+        
         ZStack {
             RoundedRectangle(cornerRadius: 30)
                 .fill(Color.white.opacity(0.72))
@@ -194,41 +236,49 @@ struct ReviewsCardView: View {
                         .font(.system(size: 24, weight: .black))
                 }
 
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text("Spectaculaire !")
-                            .font(.system(size: 18, weight: .bold))
-                        Spacer()
-                        Text("Niconni")
-                            .font(.system(size: 14))
+                if titles.isEmpty {
+                    Text("Aucune review pour cet album")
+                        .foregroundColor(.secondary)
+                } else {
+                    ForEach(0..<titles.count, id: \.self) { index in
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack {
+                                Text(titles[index])
+                                    .font(.system(size: 18, weight: .bold))
+                                Spacer()
+                                if index < usernames.count {
+                                    Text(usernames[index])
+                                        .font(.system(size: 14))
+                                }
+                            }
+
+                            if index < marks.count {
+                                HStack(spacing: 2) {
+                                    ForEach(0..<Int(marks[index]), id: \.self) { _ in
+                                        Image(systemName: "star.fill")
+                                            .foregroundColor(.orange)
+                                            .font(.system(size: 14))
+                                    }
+                                    ForEach(0..<(5 - Int(marks[index])), id: \.self) { _ in
+                                        Image(systemName: "star")
+                                            .foregroundColor(.orange)
+                                            .font(.system(size: 14))
+                                    }
+                                }
+                            }
+
+                            if index < reviews.count {
+                                Text(reviews[index])
+                                    .font(.system(size: 15))
+                                    .foregroundColor(.black.opacity(0.8))
+                                    .lineLimit(3)
+                            }
+
+                            if index < titles.count - 1 {
+                                Divider()
+                            }
+                        }
                     }
-
-                    Text("★★★★★")
-                        .foregroundColor(.orange)
-
-                    Text("printing and typesetting industry. Lorem Ipsum")
-                        .font(.system(size: 15))
-                        .foregroundColor(.black.opacity(0.8))
-
-                    Divider()
-                }
-
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text("Meilleur album all time")
-                            .font(.system(size: 18, weight: .bold))
-                        Spacer()
-                        Text("Julien3da")
-                            .font(.system(size: 14))
-                    }
-
-                    Text("★★★★★")
-                        .foregroundColor(.orange)
-
-                    Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text.")
-                        .font(.system(size: 15))
-                        .foregroundColor(.black.opacity(0.8))
-                        .lineLimit(3)
                 }
             }
             .padding(24)

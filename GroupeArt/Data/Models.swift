@@ -8,38 +8,13 @@
 import Foundation
 
 
-// devrait être une class ???
+// MARK: - Airtable Response Wrappers
 
-// et aussi ne faut-il pas créer une struct Artiste, pour différencier les utilisateurs, comme une page pro qui est
-// faite pour publier des albums/singles...
 struct UserReponse: Codable {
     let records: [UserResult]
 }
 struct UserResult: Codable {
     let fields: User
-}
-
-struct User: Identifiable, Codable {
-    var id = UUID()
-    let username: String
-    let userPic: String?
-    var certification: Bool
-    let userLocation: String?
-    var followers: Int
-    var following: Int
-    var countReviews: Int
-    let bio: String?
-    
-    private enum CodingKeys: String, CodingKey {
-        case username
-        case userPic
-        case certification
-        case userLocation
-        case followers
-        case following
-        case countReviews
-        case bio
-    }
 }
 
 struct ArtistReponse: Codable {
@@ -49,45 +24,11 @@ struct ArtistResult: Codable {
     let fields: Artist
 }
 
-struct Artist: Identifiable, Codable {
-    var id = UUID()
-    let artistName: String
-    let artistPicture: String
-    var artistDescription: String
-    
-    private enum CodingKeys: String, CodingKey {
-        case artistName
-        case artistPicture
-        case artistDescription
-    }
-}
-
 struct AlbumReponse: Codable {
     let records: [AlbumResult]
 }
 struct AlbumResult: Codable {
     let fields: Album
-}
-
-struct Album: Identifiable, Codable {
-    var id = UUID()
-    let albumTitle: String
-    let artist: Artist
-    let albumCover: String
-    let globalReview: Double
-    let yearRelease: String
-    var topReview: Review?
-    var tracks: [Track]
-    
-    private enum CodingKeys: String, CodingKey {
-        case albumTitle
-        case artist
-        case albumCover
-        case globalReview
-        case yearRelease
-        case topReview
-        case tracks
-    }
 }
 
 struct TrackReponse: Codable {
@@ -97,42 +38,11 @@ struct TrackResult: Codable {
     let fields: Track
 }
 
-struct Track: Identifiable, Codable {
-    var id = UUID()
-    let trackTitle: String
-    var trackMark: Double
-    let trackArtist: Artist
-    let albumCover: String
-    
-    private enum CodingKeys: String, CodingKey {
-        case trackTitle
-        case trackMark
-        case trackArtist
-        case albumCover
-    }
-}
-
 struct ReviewReponse: Codable {
     let records: [ReviewResult]
 }
 struct ReviewResult: Codable {
     let fields: Review
-}
-
-//utilisable et pour les concerts et pour les albums
-struct Review: Identifiable, Codable {
-    var id = UUID()
-    var reviewTitle: String
-    var markReview: Double
-    var user : User
-    var userReview: String
-    
-    private enum CodingKeys: String, CodingKey {
-        case reviewTitle
-        case markReview
-        case user
-        case userReview
-    }
 }
 
 struct ConcertReponse: Codable {
@@ -142,13 +52,150 @@ struct ConcertResult: Codable {
     let fields: Concert
 }
 
+
+// MARK: - User
+
+struct User: Identifiable, Codable {
+    var id = UUID()
+    let username: String
+    let certification: Bool?
+    let userLocation: String?
+    let followers: Int?
+    let following: Int?
+    let countReviews: Int?
+    let bio: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case username, certification, userLocation, followers, following, countReviews, bio
+    }
+}
+
+
+// MARK: - Artist
+
+struct Artist: Identifiable, Codable {
+    var id = UUID()
+    let artistName: String
+    let artistDescription: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case artistName, artistDescription
+    }
+}
+
+
+// MARK: - Album
+// Airtable renvoie les champs liés à l'artiste en flat :
+//   "artistName (from Artist)": ["Daft Punk"]
+//   "mark (from topReview)": [5, 2]
+
+struct Album: Identifiable, Codable {
+    var id = UUID()
+    var albumTitle: String = "Sans titre"
+    var yearRelease: String? = nil
+    var artistNameFromArtist: [String]? = nil
+    var markFromTopReview: [Int]? = nil
+    var reviewTitleFromTopReview: [String]? = nil
+    var userReviewFromTopReview: [String]? = nil
+    var usernameFromTopReview: [String]? = nil
+    var trackMarkFromTracks: [Int]? = nil
+
+    // Computed helpers pour l'affichage
+    var artistName: String {
+        artistNameFromArtist?.first ?? "Artiste inconnu"
+    }
+
+    var globalReview: Double {
+        guard let marks = markFromTopReview, !marks.isEmpty else { return 0.0 }
+        return Double(marks.reduce(0, +)) / Double(marks.count)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case albumTitle
+        case yearRelease
+        case artistNameFromArtist = "artistName (from Artist)"
+        case markFromTopReview = "mark (from topReview)"
+        case reviewTitleFromTopReview = "reviewTitle (from topReview)"
+        case userReviewFromTopReview = "userReview (from topReview)"
+        case usernameFromTopReview = "username (from user) (from topReview)"
+        case trackMarkFromTracks = "trackMark (from tracks)"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.albumTitle = (try? container.decode(String.self, forKey: .albumTitle)) ?? "Sans titre"
+        self.yearRelease = try? container.decode(String.self, forKey: .yearRelease)
+        self.artistNameFromArtist = try? container.decode([String].self, forKey: .artistNameFromArtist)
+        self.markFromTopReview = try? container.decode([Int].self, forKey: .markFromTopReview)
+        self.reviewTitleFromTopReview = try? container.decode([String].self, forKey: .reviewTitleFromTopReview)
+        self.userReviewFromTopReview = try? container.decode([String].self, forKey: .userReviewFromTopReview)
+        self.usernameFromTopReview = try? container.decode([String].self, forKey: .usernameFromTopReview)
+        self.trackMarkFromTracks = try? container.decode([Int].self, forKey: .trackMarkFromTracks)
+    }
+
+    // Init local pour MockData
+    init(albumTitle: String = "Sans titre", yearRelease: String? = nil, artistNameFromArtist: [String]? = nil, markFromTopReview: [Int]? = nil, reviewTitleFromTopReview: [String]? = nil, userReviewFromTopReview: [String]? = nil, usernameFromTopReview: [String]? = nil, trackMarkFromTracks: [Int]? = nil) {
+        self.albumTitle = albumTitle
+        self.yearRelease = yearRelease
+        self.artistNameFromArtist = artistNameFromArtist
+        self.markFromTopReview = markFromTopReview
+        self.reviewTitleFromTopReview = reviewTitleFromTopReview
+        self.userReviewFromTopReview = userReviewFromTopReview
+        self.usernameFromTopReview = usernameFromTopReview
+        self.trackMarkFromTracks = trackMarkFromTracks
+    }
+}
+
+
+// MARK: - Track
+
+struct Track: Identifiable, Codable {
+    var id = UUID()
+    let trackTitle: String
+    let trackMark: Int?
+
+    private enum CodingKeys: String, CodingKey {
+        case trackTitle, trackMark
+    }
+}
+
+
+// MARK: - Review
+
+struct Review: Identifiable, Codable {
+    var id = UUID()
+    let reviewTitle: String?
+    let markReview: Int?
+    let userReview: String?
+    let usernameFromUser: [String]?
+
+    var username: String {
+        usernameFromUser?.first ?? "Anonyme"
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case reviewTitle, markReview, userReview
+        case usernameFromUser = "username (from user)"
+    }
+}
+
+
+// MARK: - Concert
+
 struct Concert: Identifiable, Codable {
     var id = UUID()
     let concertTitle: String
-    let artist: Artist
-    let concertCover: String
-    let globalReview: Double
-    let concertDate: String
-    let concertLocation: String
-    let concertHall: String
+    let concertDate: String?
+    let concertLocation: String?
+    let concertHall: String?
+    let artistNameFromArtist: [String]?
+    
+    var artistName: String {
+        artistNameFromArtist?.first ?? "Artiste inconnu"
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case concertTitle, concertDate, concertLocation, concertHall
+        case artistNameFromArtist = "artistName (from artist)"
+    }
 }
