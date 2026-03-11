@@ -32,8 +32,32 @@ struct AllListView: View {
                             ListFavoriteCard(symbol: "music.note.house", titleFavoriteList: "Concert vus")
                         }
                         
+                        
+                        
                         Divider()
                             .padding(.horizontal)
+                        
+                        Spacer()
+                        
+                        Button {
+                            
+                        } label: {
+                            
+                            ZStack(alignment: .center) {
+                                
+                                RoundedRectangle(cornerRadius: 24)
+                                    .fill(Color.orangeArt)
+                                    .frame(width: 300, height: 40)
+                                    .glassEffect(.regular.tint(Color.orangeArt), in: RoundedRectangle(cornerRadius: 24))
+                                    .shadow(radius: 10)
+                                
+                                Text("Créer une nouvelle liste")
+                                    .font(.system(size: 15, weight: .semibold))
+                                    .foregroundColor(.noirArt)
+                            }
+                                
+                        }
+
                         
                         ListCard(
                             title: "Tout mes vinyles",
