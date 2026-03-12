@@ -82,8 +82,8 @@ struct ArtistFavoriteDetailView: View {
                                                             .foregroundColor(.gray)
                                                     )
                                             }
-                                            .frame(width: 56, height: 56)
-                                            .clipShape(Circle())
+                                            .frame(width: 60, height: 60)
+                                            .cornerRadius(12)
                                         } else {
                                             Circle()
                                                 .fill(Color.gray.opacity(0.2))

@@ -1,6 +1,25 @@
+////
+////  HistoAlbum.swift
+////  GroupeArt
+////
+////  Created by FUVE on 11/03/2026.
+////
 //
-//  HistoAlbum.swift
-//  GroupeArt
+//<<<<<<< HEAD:GroupeArt/Components/History/HistoAlbumCard.swift
+////import SwiftUI
+////
+////struct HistoAlbumCard: View {
+////    let album : Album
+////    
+////    var body: some View {
+////    }
+////}
+////
+////#Preview {
+////    HistoAlbumCard(album: Albums[0])
+////}
+//=======
+//import SwiftUI
 //
 //  Created by FUVE on 10/03/2026.
 //
