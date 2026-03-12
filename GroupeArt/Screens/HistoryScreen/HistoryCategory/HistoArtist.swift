@@ -2,17 +2,36 @@
 //  HistoArtist.swift
 //  GroupeArt
 //
-//  Created by FUVE on 11/03/2026.
+//  Created by FUVE on 10/03/2026.
 //
 
 import SwiftUI
 
 struct HistoArtist: View {
+    
+    let columns = [GridItem(.flexible()),GridItem(.flexible())]
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            ZStack {
+                
+                    LazyVGrid(columns: columns, spacing: 16) {
+                        ForEach(mockArtists) { artist in
+                            NavigationLink {
+                                ArtistDetails(artist: artist)
+                            } label: {
+                                HistoArtistCard(artist: artist)
+                            } .buttonStyle(.plain)
+                        }
+                    }
+                    .padding()
+                
+            }
+        }
     }
 }
 
 #Preview {
     HistoArtist()
 }
+

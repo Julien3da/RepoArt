@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HistoAlbumCard: View {
-    let album : Album
+    let album : FakeAlbum
     
     var body: some View {
         VStack {

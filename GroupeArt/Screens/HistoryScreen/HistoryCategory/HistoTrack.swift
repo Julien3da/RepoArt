@@ -2,17 +2,33 @@
 //  HistoTrack.swift
 //  GroupeArt
 //
-//  Created by FUVE on 11/03/2026.
+//  Created by FUVE on 06/03/2026.
 //
 
 import SwiftUI
 
 struct HistoTrack: View {
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+                
+                
+                    VStack(spacing: 16) {
+                        ForEach(mockTracks) { track in
+                            NavigationLink {
+                                TrackDetails(track: track)
+                            } label: {
+                                HistoTrackCard(track: track)
+                            } .buttonStyle(.plain)
+                        }
+                    }
+                    .padding()
+                
+        }
     }
 }
 
 #Preview {
     HistoTrack()
 }
+

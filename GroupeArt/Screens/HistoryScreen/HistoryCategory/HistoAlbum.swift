@@ -2,17 +2,35 @@
 //  HistoAlbum.swift
 //  GroupeArt
 //
-//  Created by FUVE on 11/03/2026.
+//  Created by FUVE on 10/03/2026.
 //
 
 import SwiftUI
 
 struct HistoAlbum: View {
+    
+    let columns = [GridItem(.flexible()),GridItem(.flexible())]
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            
+              
+                    LazyVGrid(columns: columns, spacing: 16) {
+                        ForEach(mockAlbums) { album in
+                            NavigationLink {
+                                AlbumDetails(album: album)
+                            } label: {
+                                HistoAlbumCard(album: album)
+                            } .buttonStyle(.plain)
+                        }
+                    }
+                    .padding()
+                
+        }
     }
 }
 
 #Preview {
     HistoAlbum()
 }
+
