@@ -42,5 +42,5 @@ struct HistoArtistCard: View {
 }
 
 #Preview {
-    HistoArtistCard(artist: .mock)
+    HistoArtistCard(artist: mockArtists[0])
 }

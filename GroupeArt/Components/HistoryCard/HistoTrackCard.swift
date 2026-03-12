@@ -53,6 +53,6 @@ struct HistoTrackCard: View {
 }
 
 #Preview {
-    HistoTrackCard(track: .mock)
+    HistoTrackCard(track: mockTracks[0])
 }
 
