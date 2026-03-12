@@ -129,7 +129,7 @@ struct ConcertFavoriteDetailView: View {
                                                             .foregroundColor(.gray)
                                                     )
                                             }
-                                            .frame(width: 60, height: 60)
+                                            .frame(width: 70, height: 100)
                                             .cornerRadius(12)
                                         } else {
                                             RoundedRectangle(cornerRadius: 12)
