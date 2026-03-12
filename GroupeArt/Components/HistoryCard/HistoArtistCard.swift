@@ -1,34 +1,28 @@
+//
+//  HistoArtistCard.swift
 //  GroupeArt
 //
-//  Created by FUVE on 05/03/2026.
+//  Created by FUVE on 11/03/2026.
 //
 
 import SwiftUI
 
-struct HistoTrackCard: View {
-    let track : Track
+struct HistoArtistCard: View {
+    let artist : Artist
     
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(track.trackTitle)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                Text(track.trackArtist.artistName)
-                    .fontWeight(.thin)
-            }
-            .padding(.leading)
-            
-            Spacer()
-            
-            Image(track.albumCover)
+        VStack {
+            Image(artist.artistPicture)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 55, height: 55)
-                .cornerRadius(12)
-                .padding(.trailing)
+                .frame(width: 144, height: 144)
+                .cornerRadius(14)
+                .padding()
+            Text(artist.artistName)
+                .font(.body)
+                .fontWeight(.semibold)
         }
-        .frame(width: 360, height: 84)
+        .frame(width: 174, height: 230)
         //EFFET LIQUID GLASS
         .background(
             ZStack {
@@ -48,5 +42,5 @@ struct HistoTrackCard: View {
 }
 
 #Preview {
-    HistoTrackCard(track: .mock)
+    HistoArtistCard(artist: .mock)
 }

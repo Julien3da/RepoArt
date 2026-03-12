@@ -2,12 +2,13 @@
 //  HistoTrack.swift
 //  GroupeArt
 //
-//  Created by FUVE on 06/03/2026.
+//  Created by FUVE on 11/03/2026.
 //
 
 import SwiftUI
 
 struct HistoTrack: View {
+//<<<<<<< HEAD:GroupeArt/Screens/History/HistoTrack.swift
     
     @State var viewModel = TrackViewModel()
 
@@ -40,6 +41,10 @@ struct HistoTrack: View {
         .task {
             try? await viewModel.fetchTracks()
         }
+//=======
+//    var body: some View {
+//        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+//>>>>>>> main:GroupeArt/Screens/HistoryScreen/HistoryCategory/HistoTrack.swift
     }
 }
 
