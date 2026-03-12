@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HistoArtistCard: View {
-    let artist : Artist
+    let artist : FakeArtist
     
     var body: some View {
         VStack {

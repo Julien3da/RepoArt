@@ -10,7 +10,7 @@ import SwiftUI
 import SwiftUI
 
 struct HistoTrackCard: View {
-    let track : Track
+    let track : FakeTrack
     
     var body: some View {
         HStack {

@@ -2,17 +2,73 @@
 //  HistoryView.swift
 //  GroupeArt
 //
-//  Created by FUVE on 11/03/2026.
+//  Created by FUVE on 10/03/2026.
 //
 
 import SwiftUI
 
 struct HistoryView: View {
+    
+    @State private var histoTypeFilter: Int = 1
+    
+    let backgroundGradient = LinearGradient(
+        stops: [
+            Gradient.Stop(color: .grisArt, location: 0.07),
+            Gradient.Stop(color: .beigeArt, location: 0.66),
+            Gradient.Stop(color: .orangeArt, location: 1.0)
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            ZStack {
+                backgroundGradient.ignoresSafeArea()
+                
+                ScrollView(showsIndicators: false) {
+                    LazyVStack(alignment: .leading, pinnedViews: []) {
+                        
+                        Picker("Filtrer par type", selection: $histoTypeFilter) {
+                            HStack {
+                                Image(systemName: "square.stack")
+                                Text("Albums")
+                            }.tag(0)
+                            
+                            HStack {
+                                Image(systemName: "music.microphone")
+                                Text("Artists")
+                            }.tag(1)
+                            
+                            HStack {
+                                Image(systemName: "music.note")
+                                Text("Morceaux")
+                            }.tag(2)
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom, 8)
+                        
+                        switch histoTypeFilter {
+                        case 0:
+                            HistoAlbum()
+                        case 1:
+                            HistoArtist()
+                        case 2:
+                            HistoTrack()
+                        default:
+                            EmptyView()
+                        }
+                    }
+                }
+                .navigationTitle("Historique")
+                .navigationBarTitleDisplayMode(.large)
+            }
+        }
     }
 }
 
 #Preview {
     HistoryView()
 }
+
+

@@ -2,7 +2,7 @@
 //  HistoTrack.swift
 //  GroupeArt
 //
-//  Created by FUVE on 11/03/2026.
+//  Created by FUVE on 06/03/2026.
 //
 
 import SwiftUI
@@ -51,3 +51,4 @@ struct HistoTrack: View {
 #Preview {
     HistoTrack()
 }
+
