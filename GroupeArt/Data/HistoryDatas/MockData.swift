@@ -16,7 +16,7 @@
 //    var id: String { rawValue }
 //}
 //
-//<<<<<<< HEAD
+
 //let mockArtists: [Artist] = [
 //    Artist(
 //        artistName: "Michael Jackson",
@@ -145,7 +145,7 @@
 //        tracks: []
 //    )
 //]
-//=======
+
 // Fake datas
 
 import Foundation
@@ -280,4 +280,4 @@ let mockAlbums: [Album] = [
         tracks: []
     )
 ]
-//>>>>>>> main
+
