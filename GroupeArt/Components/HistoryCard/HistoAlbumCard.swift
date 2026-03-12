@@ -44,5 +44,5 @@ struct HistoAlbumCard: View {
 }
 
 #Preview {
-    HistoAlbumCard(album: mockAlbums[0])
+    HistoAlbumCard(album: .mock)
 }

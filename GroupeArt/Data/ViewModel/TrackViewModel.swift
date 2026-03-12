@@ -18,7 +18,7 @@ class TrackViewModel {
     
     var tracks: [Track] = []
 
-    func fetchTracks() async throws -> [Track] {
+    func fetchTracks() async throws {
         var request = URLRequest(url: baseURL)
                 request.httpMethod = "GET"
                 request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
@@ -32,7 +32,6 @@ class TrackViewModel {
                     let decoded = try decoder.decode(TrackReponse.self, from: data)
                     let tracks = decoded.records.map { $0.fields }
                     self.tracks = tracks
-                    return tracks
                 } catch {
                     print("Échec du décodage: \(error)")
                     throw error
