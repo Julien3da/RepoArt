@@ -215,6 +215,9 @@ struct Review: Identifiable, Codable {
     let markReview: Int?
     let userReview: String?
     let usernameFromUser: [String]?
+    
+    let album: [String]?
+    let track: [String]?
 
     var username: String {
         usernameFromUser?.first ?? "Anonyme"
@@ -223,6 +226,8 @@ struct Review: Identifiable, Codable {
     private enum CodingKeys: String, CodingKey {
         case reviewTitle, markReview, userReview
         case usernameFromUser = "username (from user)"
+        case album = "Album"
+        case track = "Track"
     }
 }
 

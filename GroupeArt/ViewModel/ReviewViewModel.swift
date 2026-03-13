@@ -17,8 +17,13 @@ class ReviewViewModel {
         )!
     
     var reviews: [Review] = []
+    var isLoading = false
     
     func fetchReviews() async throws -> [Review] {
+        
+        isLoading = true
+        defer { isLoading = false }
+        
         var request = URLRequest(url: baseURL)
                 request.httpMethod = "GET"
                 request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
