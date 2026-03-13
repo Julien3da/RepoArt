@@ -190,17 +190,7 @@ struct Album: Identifiable, Codable {
         self.artistPictureFromArtist = try? container.decode([AirtableAttachment].self, forKey: .artistPictureFromArtist)
     }
 
-    // Init local pour MockData
-    init(albumTitle: String = "Sans titre", yearRelease: String? = nil, artistNameFromArtist: [String]? = nil, markFromTopReview: [Int]? = nil, reviewTitleFromTopReview: [String]? = nil, userReviewFromTopReview: [String]? = nil, usernameFromTopReview: [String]? = nil, trackMarkFromTracks: [Int]? = nil) {
-        self.albumTitle = albumTitle
-        self.yearRelease = yearRelease
-        self.artistNameFromArtist = artistNameFromArtist
-        self.markFromTopReview = markFromTopReview
-        self.reviewTitleFromTopReview = reviewTitleFromTopReview
-        self.userReviewFromTopReview = userReviewFromTopReview
-        self.usernameFromTopReview = usernameFromTopReview
-        self.trackMarkFromTracks = trackMarkFromTracks
-    }
+   
 }
 
 
