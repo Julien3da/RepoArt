@@ -2,12 +2,16 @@ import SwiftUI
 
 struct ContentView: View {
     
+    
+    
     @State private var albumVM = AlbumViewModel()
     var specificAlbum: Album? = nil
     
     private var displayedAlbum: Album? {
         specificAlbum ?? albumVM.randomAlbum
     }
+    
+    
     
     var body: some View {
         ZStack {
@@ -17,22 +21,26 @@ struct ContentView: View {
             if let album = displayedAlbum {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 18) {
+
                         // Cover album en grand en haut
                         if let urlString = album.coverURL, let url = URL(string: urlString) {
                             AsyncImage(url: url) { image in
-                                image
-                                    .resizable()
-                                    .scaledToFill()
+                                ZStack {
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                        .scaleEffect(1.05)
+                                    Color.black.opacity(0.35)
+                                }
                             } placeholder: {
                                 Color.gray.opacity(0.3)
                                     .overlay(ProgressView())
                             }
-                            .frame(height: 320)
-                            .clipShape(RoundedRectangle(cornerRadius: 80))
+                            .frame(maxWidth: .infinity, minHeight: 340, maxHeight: 340)
+                            .clipped()
                         } else {
-                            RoundedRectangle(cornerRadius: 80)
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(height: 320)
+                            Color.gray.opacity(0.3)
+                                .frame(maxWidth: .infinity, minHeight: 340, maxHeight: 340)
                                 .overlay(
                                     Image(systemName: "music.note")
                                         .font(.system(size: 60))
@@ -61,6 +69,7 @@ struct ContentView: View {
                     }
                     .padding(.bottom, 24)
                 }
+                .ignoresSafeArea(edges: .top)
             } else {
                 ProgressView("Chargement d'un album…")
             }
