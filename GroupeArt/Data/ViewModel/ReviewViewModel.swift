@@ -17,8 +17,13 @@ class ReviewViewModel {
         )!
     
     var reviews: [Review] = []
+    var isLoading = false
     
     func fetchReviews() async throws -> [Review] {
+        
+        isLoading = true
+        defer { isLoading = false }
+        
         var request = URLRequest(url: baseURL)
                 request.httpMethod = "GET"
                 request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
@@ -32,7 +37,10 @@ class ReviewViewModel {
                     let decoded = try decoder.decode(ReviewReponse.self, from: data)
                     let reviews = decoded.records.map { $0.fields }
                     self.reviews = reviews
+                    
+                    print("Nombre de reviews chargées : \(reviews.count)")
                     return reviews
+                    
                 } catch {
                     print("Échec du décodage: \(error)")
                     throw error
