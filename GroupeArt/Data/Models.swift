@@ -84,6 +84,7 @@ struct ConcertResult: Codable {
 struct User: Identifiable, Codable {
     var id = UUID()
     let username: String
+    var userPic: [AirtableAttachment]? = nil
     let certification: Bool?
     let userLocation: String?
     let followers: Int?
@@ -92,7 +93,28 @@ struct User: Identifiable, Codable {
     let bio: String?
 
     private enum CodingKeys: String, CodingKey {
-        case username, certification, userLocation, followers, following, countReviews, bio
+        case username, userPic, certification, userLocation, followers, following, countReviews, bio
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.username = try container.decode(String.self, forKey: .username)
+        self.userPic = try container.decodeIfPresent([AirtableAttachment].self, forKey: .userPic)
+        self.certification = try container.decodeIfPresent(Bool.self, forKey: .certification)
+        self.userLocation = try container.decodeIfPresent(String.self, forKey: .userLocation)
+        self.followers = try container.decodeIfPresent(Int.self, forKey: .followers)
+        self.following = try container.decodeIfPresent(Int.self, forKey: .following)
+        self.countReviews = try container.decodeIfPresent(Int.self, forKey: .countReviews)
+        self.bio = try container.decodeIfPresent(String.self, forKey: .bio)
+    }
+    init(username: String, certification: Bool?, userLocation: String?, followers: Int?, following: Int?, countReviews: Int?, bio: String? ) {
+        self.username = username
+        self.certification = certification
+        self.userLocation = userLocation
+        self.followers = followers
+        self.following = following
+        self.countReviews = countReviews
+        self.bio = bio
     }
 }
 
