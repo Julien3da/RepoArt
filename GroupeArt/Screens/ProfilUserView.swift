@@ -120,14 +120,17 @@ struct ProfilUserView: View {
                             HStack(spacing: 30) {
                                 VStack{
                                     Text("36k")
+                                        .font(.system(size: 16, weight: .semibold))
                                     Text("followers")
                                 }
                                 VStack{
                                     Text("46")
+                                        .font(.system(size: 16, weight: .semibold))
                                     Text("following")
                                 }
                                 VStack{
                                     Text("56")
+                                        .font(.system(size: 16, weight: .semibold))
                                     Text("Avis")
                                 }
                             }
@@ -137,8 +140,8 @@ struct ProfilUserView: View {
                     .frame(height: 112)
                     
                     VStack(alignment: .leading){
-                        Text("Lorem ipsum. Etiam ac leo a risus tristique")
-                            .font(.body)
+                        Text("Lorem ipsum. Etiam ac leo a risus tristique turpis")
+                            .font(.subheadline)
                             .multilineTextAlignment(.leading)
                             .padding(.leading)
                         
