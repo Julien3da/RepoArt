@@ -11,9 +11,9 @@ struct FeedCardView: View {
     var body: some View {
         
         ZStack{
-            RoundedRectangle(cornerRadius: 24)
+            RoundedRectangle(cornerRadius: 28)
                 .fill(.ultraThinMaterial)
-                .glassEffect(Glass.clear, in: .rect(cornerRadius: 24))
+                .glassEffect(Glass.clear, in: .rect(cornerRadius: 28))
                 .frame(height: 200)
                 .frame(maxWidth: .infinity)
                 .shadow(radius: 4, x: 0, y: 4)
@@ -44,22 +44,16 @@ struct FeedCardView: View {
                     } .padding(.leading)
                     
                     VStack{
-                        
                         HStack {
                             Spacer()
-                            RoundedRectangle(cornerRadius: 10)
+                            RoundedRectangle(cornerRadius: 12)
                                 .frame(width: 100, height: 100)
                                 .foregroundStyle(Color.gray)
                                 .padding(14)
-                            
                         }
-                        
-                        
                         HStack {
                             Spacer()
-                            
                             Button {
-                                
                             } label: {
                                 Image(systemName: "chevron.right")
                                     .frame(width: 12, height: 12)
@@ -67,24 +61,13 @@ struct FeedCardView: View {
                                     .font(.system(size: 12))
                                     .bold()
                                     .padding(12)
-                                    
-                                    
                             }.glassEffect()
                                 .padding(.trailing, 14)
                             
                         }
-                        
-                        
-                        
-                        
                     }
-                    
                     Spacer()
-                    
-                    
                 }
-                
-                
             }
         }
     }

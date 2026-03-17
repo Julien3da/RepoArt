@@ -2,7 +2,7 @@
 //  HistoArtist.swift
 //  GroupeArt
 //
-//  Created by FUVE on 10/03/2026.
+//  Created by BlueOneThree on 10/03/2026.
 //
 
 import SwiftUI

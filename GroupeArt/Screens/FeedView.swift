@@ -13,15 +13,22 @@ struct FeedView: View {
     @State private var feedFollowFilter = 0
     @State private var feedTypeFilter = 0
     
+    let backgroundGradient = LinearGradient(
+        stops: [
+            Gradient.Stop(color: .grisArt, location: 0.07),
+            Gradient.Stop(color: .beigeArt, location: 0.66),
+            Gradient.Stop(color: .orangeArt, location: 1.0)
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+    
     var body: some View {
         
         NavigationStack {
                             
                 ZStack{
-//                    LinearGradient(gradient : Gradient (colors: [.orange, .gris]), startPoint: .bottom, endPoint: .top)
-//                        .ignoresSafeArea()
-//                        .opacity(0.5)
-
+                    backgroundGradient.ignoresSafeArea()
                     
                     VStack(alignment: .leading){
                         
