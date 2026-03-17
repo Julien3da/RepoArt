@@ -193,7 +193,7 @@ struct Album: Identifiable, Codable {
     }
 
     init(
-        id: UUID = UUID(),
+        id: String = "",
         recordId: String? = nil,
         albumTitle: String = "Sans titre",
         yearRelease: String? = nil,

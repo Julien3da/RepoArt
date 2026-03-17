@@ -35,7 +35,7 @@ struct UserReviewsList: View {
         .task {
             isLoading = true
             do {
-                _ = try await viewModel.fetchReviews(forUserId: userId)
+                _ = try await viewModel.fetchUserReviews(forUserId: userId)
             } catch {
                 // Optionally, handle/log error
             }
