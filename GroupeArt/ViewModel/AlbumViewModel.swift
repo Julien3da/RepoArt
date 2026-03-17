@@ -32,7 +32,11 @@ class AlbumViewModel {
 
                 do {
                     let decoded = try decoder.decode(AlbumReponse.self, from: data)
-                    let albums = decoded.records.map { $0.fields }.filter { $0.albumTitle != "Sans titre" }
+                    let albums = decoded.records.map { record -> Album in
+                        var album = record.fields
+                        album.id = record.id
+                        return album
+                    } .filter { $0.albumTitle != "Sans titre" }
                     self.albums = albums
                     return albums
                 } catch {

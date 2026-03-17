@@ -18,7 +18,7 @@ struct FeedCardView: View {
             RoundedRectangle(cornerRadius: 24)
                 .fill(Color.grisArt)
                 .glassEffect(.regular.tint(Color.grisArt), in: RoundedRectangle(cornerRadius: 24))
-                .frame(height: 200)
+                .frame(height: 220)
                 .frame(maxWidth: .infinity)
                 .shadow(color: .black.opacity(0.12), radius: 10, x: 0, y: 4)
                 .padding(.vertical, 3)
@@ -42,6 +42,9 @@ struct FeedCardView: View {
                             Text(track.trackTitle)
                                 .font(.title3)
                                 .bold()
+
+                            Text(track.artistName)
+                                .font(.subheadline)
                         }
                         
                         Text(review.reviewTitle ?? "Aucun titre")
@@ -83,7 +86,9 @@ struct FeedCardView: View {
                         HStack {
                             Spacer()
                             
-                            if let cover = album?.coverURL,
+                            let cover = album?.coverURL ?? track?.coverURL
+                            
+                            if let cover,
                                let url = URL(string: cover) {
 
                                 AsyncImage(url: url) { image in
@@ -95,12 +100,14 @@ struct FeedCardView: View {
                                 }
                                 .frame(width: 100, height: 100)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .padding(.trailing, 18)
 
                             } else {
 
                                 RoundedRectangle(cornerRadius: 10)
                                     .frame(width: 100, height: 100)
                                     .foregroundStyle(Color.gray)
+                                    .padding(.trailing, 18)
 
                             }
                         }
@@ -133,10 +140,11 @@ struct FeedCardView: View {
 #Preview {
     FeedCardView(
         review: Review(
-            reviewTitle: "Brillance instrumentale agréable",
-            markReview: 4,
-            userReview: "La clarté générale de la piste est exemplaire.",
-            usernameFromUser: ["sophielaurent"],
+            id: "previewReview",
+            reviewTitle: "Super groove",
+            markReview: 5,
+            userReview: "La ligne de basse est incroyable.",
+            usernameFromUser: ["julien"],
             album: nil,
             track: nil
         ),
