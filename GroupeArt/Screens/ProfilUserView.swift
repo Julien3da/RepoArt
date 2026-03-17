@@ -140,8 +140,8 @@ struct ProfilUserView: View {
                     .frame(height: 112)
                     
                     VStack(alignment: .leading){
-                        Text("Lorem ipsum. Etiam ac leo a risus tristique turpis")
-                            .font(.subheadline)
+                        Text("Lorem ipsum. Etiam ac leo a risus tristique")
+                            .font(.body)
                             .multilineTextAlignment(.leading)
                             .padding(.leading)
                         
