@@ -10,6 +10,7 @@ import SwiftUI
 
 struct FeedView: View {
     
+    @State private var artistVM = ArtistViewModel()
     @State private var viewModel = ReviewViewModel()
     @State private var albumVM = AlbumViewModel()
     @State private var trackVM = TrackViewModel()
@@ -45,13 +46,13 @@ struct FeedView: View {
                         Picker("Filtrer par type", selection: $feedTypeFilter) {
                             
                             HStack{
-                                Image(systemName: "square.stack")
-                                Text("Albums")
+                                Image(systemName: "play.circle")
+                                Text("Tout")
                             } .tag(0)
                             
                             HStack{
-                                Image(systemName: "music.note.house.fill")
-                                Text("Concerts")
+                                Image(systemName: "square.stack")
+                                Text("Albums")
                             } .tag(1)
                             
                             HStack{
@@ -59,42 +60,58 @@ struct FeedView: View {
                                 Text("Morceaux")
                             } .tag(2)
                             
+//                            HStack{
+//                                Image(systemName: "music.note.house.fill")
+//                                Text("Concerts")
+//                            } .tag(3)
+                            
                         } .accentColor(.orange)
                             .accentColor(.orange)
+                            
+                            
                         
                         if viewModel.isLoading {
                             ProgressView("Chargement du feed...")
                                 .frame(maxWidth: .infinity, alignment: .center)
                         } else {
+                                let filteredReviews = viewModel.reviews.filter { review in
+                                    switch feedTypeFilter {
+                                        case 1: // Albums
+                                            return review.album != nil && !(review.album?.isEmpty ?? true)
+                                            
+                                        case 2: // Tracks
+                                            return review.track != nil && !(review.track?.isEmpty ?? true)
+                                            
+                                        default: // Tout
+                                            return true
+                                        }
+                            }
                             
                             
-                            ForEach(viewModel.reviews) { review in
-                                
-                                let album = albumVM.albums.first { album in
-                                    review.album?.contains(album.id.uuidString) ?? false
-                                }
-                                
-                                let track = trackVM.tracks.first { track in
-                                    review.track?.contains(track.id.uuidString) ?? false
-                                }
-                                
-                                FeedCardView(
+                            ForEach(filteredReviews) { review in
+                                FeedItemView(
                                     review: review,
-                                    album: album,
-                                    track: track
+                                    albums: albumVM.albums,
+                                    tracks: trackVM.tracks,
+                                    artists: artistVM.artists
                                 )
                             }
- 
                         }
                     } .padding()
                 }
             } .navigationTitle("Feed")
         }
         .task {
+
+//            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+//                return
+//            }
+
             do {
                 try await viewModel.fetchReviews()
                 try? await albumVM.fetchAlbums()
                 try? await trackVM.fetchTracks()
+                try? await artistVM.fetchArtists()
             } catch {
                 print("Erreur chargement feed : \(error)")
             }

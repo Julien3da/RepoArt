@@ -35,7 +35,11 @@ class ReviewViewModel {
 
                 do {
                     let decoded = try decoder.decode(ReviewReponse.self, from: data)
-                    let reviews = decoded.records.map { $0.fields }
+                    let reviews = decoded.records.map { record -> Review in
+                        var review = record.fields
+                        review.id = record.id
+                        return review
+                    }
                     self.reviews = reviews
                     return reviews
                 } catch {
