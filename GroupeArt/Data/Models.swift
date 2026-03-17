@@ -2,11 +2,10 @@
 //  Models.swift
 //  GroupeArt
 //
-//  Created by Matt et Nico on 05/03/2026.
+//  Created by GroupeArt on 05/03/2026.
 //
 
 import Foundation
-
 
 // MARK: - Airtable Attachment (images)
 
@@ -32,7 +31,6 @@ struct AirtableAttachment: Codable {
         thumbnails?.large?.url ?? url
     }
 }
-
 
 // MARK: - Airtable Response Wrappers
 
@@ -80,53 +78,33 @@ struct ConcertReponse: Codable {
     let records: [ConcertResult]
 }
 struct ConcertResult: Codable {
+    let id: String
     let fields: Concert
 }
-
 
 // MARK: - User
 
 struct User: Identifiable, Codable {
     var id = UUID()
-    let username: String
-    var userPic: [AirtableAttachment]? = nil
-    let certification: Bool?
-    let userLocation: String?
-    let followers: Int?
-    let following: Int?
-    let countReviews: Int?
-    let bio: String?
-    
+    var recordId: String? = nil
+    var username: String
+    var userPic : [AirtableAttachment]?
+    var certification: Bool?
+    var userLocation: String?
+    var followers: Int?
+    var following: Int?
+    var countReviews: Int?
+    var bio: String?
+
     private enum CodingKeys: String, CodingKey {
         case username, userPic, certification, userLocation, followers, following, countReviews, bio
     }
-    
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.username = try container.decode(String.self, forKey: .username)
-        self.userPic = try container.decodeIfPresent([AirtableAttachment].self, forKey: .userPic)
-        self.certification = try container.decodeIfPresent(Bool.self, forKey: .certification)
-        self.userLocation = try container.decodeIfPresent(String.self, forKey: .userLocation)
-        self.followers = try container.decodeIfPresent(Int.self, forKey: .followers)
-        self.following = try container.decodeIfPresent(Int.self, forKey: .following)
-        self.countReviews = try container.decodeIfPresent(Int.self, forKey: .countReviews)
-        self.bio = try container.decodeIfPresent(String.self, forKey: .bio)
-    }
-    init(username: String, certification: Bool?, userLocation: String?, followers: Int?, following: Int?, countReviews: Int?, bio: String? ) {
-        self.username = username
-        self.certification = certification
-        self.userLocation = userLocation
-        self.followers = followers
-        self.following = following
-        self.countReviews = countReviews
-        self.bio = bio
-    }
 }
-
 
 // MARK: - Artist
 
 struct Artist: Identifiable, Codable {
+    var recordId: String? = nil
     var id: String = ""
     var artistName: String = "Artiste inconnu"
     var artistDescription: String? = nil
@@ -153,13 +131,10 @@ struct Artist: Identifiable, Codable {
     }
 }
 
-
 // MARK: - Album
-// Airtable renvoie les champs liés à l'artiste en flat :
-//   "artistName (from Artist)": ["Daft Punk"]
-//   "mark (from topReview)": [5, 2]
 
 struct Album: Identifiable, Codable {
+    var recordId: String? = nil
     var id: String = ""
     var albumTitle: String = "Sans titre"
     var yearRelease: String? = nil
@@ -216,14 +191,40 @@ struct Album: Identifiable, Codable {
         self.albumCover = try? container.decode([AirtableAttachment].self, forKey: .albumCover)
         self.artistPictureFromArtist = try? container.decode([AirtableAttachment].self, forKey: .artistPictureFromArtist)
     }
-    
-    
-}
 
+    init(
+        id: UUID = UUID(),
+        recordId: String? = nil,
+        albumTitle: String = "Sans titre",
+        yearRelease: String? = nil,
+        artistNameFromArtist: [String]? = nil,
+        markFromTopReview: [Int]? = nil,
+        reviewTitleFromTopReview: [String]? = nil,
+        userReviewFromTopReview: [String]? = nil,
+        usernameFromTopReview: [String]? = nil,
+        trackMarkFromTracks: [Int]? = nil,
+        albumCover: [AirtableAttachment]? = nil,
+        artistPictureFromArtist: [AirtableAttachment]? = nil
+    ) {
+        self.id = id
+        self.recordId = recordId
+        self.albumTitle = albumTitle
+        self.yearRelease = yearRelease
+        self.artistNameFromArtist = artistNameFromArtist
+        self.markFromTopReview = markFromTopReview
+        self.reviewTitleFromTopReview = reviewTitleFromTopReview
+        self.userReviewFromTopReview = userReviewFromTopReview
+        self.usernameFromTopReview = usernameFromTopReview
+        self.trackMarkFromTracks = trackMarkFromTracks
+        self.albumCover = albumCover
+        self.artistPictureFromArtist = artistPictureFromArtist
+    }
+}
 
 // MARK: - Track
 
 struct Track: Identifiable, Codable {
+    var recordId: String? = nil
     var id: String = ""
     let trackTitle: String
     let trackMark: Int?
@@ -264,10 +265,10 @@ struct Track: Identifiable, Codable {
     
 }
 
-
 // MARK: - Review
 
 struct Review: Identifiable, Codable {
+    var recordId: String? = nil
     var id: String = ""
     let reviewTitle: String?
     let markReview: Int?
@@ -289,18 +290,18 @@ struct Review: Identifiable, Codable {
     }
 }
 
-
 // MARK: - Concert
 
 struct Concert: Identifiable, Codable {
     var id = UUID()
+    var recordId: String? = nil
     var concertTitle: String = "Sans titre"
     var concertDate: String? = nil
     var concertLocation: String? = nil
     var concertHall: String? = nil
     var artistNameFromArtist: [String]? = nil
     var concertCover: [AirtableAttachment]? = nil
-    
+
     var artistName: String {
         artistNameFromArtist?.first ?? "Artiste inconnu"
     }
@@ -308,7 +309,7 @@ struct Concert: Identifiable, Codable {
     var coverURL: String? {
         concertCover?.first?.imageURL
     }
-    
+
     private enum CodingKeys: String, CodingKey {
         case concertTitle, concertDate, concertLocation, concertHall, concertCover
         case artistNameFromArtist = "artistName (from artist)"
@@ -323,8 +324,14 @@ struct Concert: Identifiable, Codable {
         self.artistNameFromArtist = try? c.decode([String].self, forKey: .artistNameFromArtist)
         self.concertCover = try? c.decode([AirtableAttachment].self, forKey: .concertCover)
     }
-    
-    init(concertTitle: String = "Sans titre", concertDate: String? = nil, concertLocation: String? = nil, concertHall: String? = nil, artistNameFromArtist: [String]? = nil) {
+
+    init(
+        concertTitle: String = "Sans titre",
+        concertDate: String? = nil,
+        concertLocation: String? = nil,
+        concertHall: String? = nil,
+        artistNameFromArtist: [String]? = nil
+    ) {
         self.concertTitle = concertTitle
         self.concertDate = concertDate
         self.concertLocation = concertLocation

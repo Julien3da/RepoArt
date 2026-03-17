@@ -114,9 +114,7 @@ struct FeedCardView: View {
                         
                         HStack {
                             Spacer()
-                            
                             Button {
-                                
                             } label: {
                                 Image(systemName: "chevron.right")
                                     .frame(width: 12, height: 12)
@@ -129,7 +127,6 @@ struct FeedCardView: View {
                             .padding(.trailing, 14)
                         }
                     }
-                    
                     Spacer()
                 }
             }

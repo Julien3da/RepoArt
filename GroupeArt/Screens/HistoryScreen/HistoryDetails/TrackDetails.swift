@@ -2,7 +2,7 @@
 //  AlbumDetails.swift
 //  GroupeArt
 //
-//  Created by FUVE on 10/03/2026.
+//  Created by BlueOneThree on 10/03/2026.
 //
 
 import SwiftUI
@@ -40,7 +40,7 @@ struct TrackDetails: View {
                         }
                     }
 
-                    Text(track.album.text.isEmpty ? "Album inconnu" : track.album.text)
+                    Text(track.name.isEmpty ? "Album inconnu" : track.name)
                         .font(.title)
                         .fontWeight(.bold)
 
@@ -48,19 +48,8 @@ struct TrackDetails: View {
                         .font(.title2)
                 }
                 .frame(width: 325, height: 403)
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 28)
-                            .fill(.ultraThinMaterial)
-                        RoundedRectangle(cornerRadius: 28)
-                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                    }
-                )
-                .background(Color.grisArt.opacity(0.1))
-                .cornerRadius(28)
-                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                .glassEffect(in: .rect(cornerRadius: 28.0))
                 .padding()
-
                 LastFmButton(url: track.url)
                     .padding()
             }

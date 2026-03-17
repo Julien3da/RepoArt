@@ -2,7 +2,7 @@
 //  DataBase.swift
 //  GroupeArt
 //
-//  Created by Matt et Nico on 05/03/2026.
+//  Created by GroupeArt on 05/03/2026.
 //
 
 import Foundation
