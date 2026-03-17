@@ -10,6 +10,11 @@ import SwiftUI
 
 struct FeedView: View {
     
+    @State private var artistVM = ArtistViewModel()
+    @State private var viewModel = ReviewViewModel()
+    @State private var albumVM = AlbumViewModel()
+    @State private var trackVM = TrackViewModel()
+    
     @State private var feedFollowFilter = 0
     @State private var feedTypeFilter = 0
     
@@ -26,58 +31,95 @@ struct FeedView: View {
     var body: some View {
         
         NavigationStack {
+            ZStack {
+                backgroundGradient.ignoresSafeArea()
+                
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading) {
+                        
+                        Picker("Filtrer par suivi", selection: $feedFollowFilter) {
+                            Text("Tout").tag(0)
+                            Text("Suivis").tag(1)
+                        }
+                        .pickerStyle(.segmented)
+                        
+                        Picker("Filtrer par type", selection: $feedTypeFilter) {
                             
-                ZStack{
-                    backgroundGradient.ignoresSafeArea()
-                    
-                    VStack(alignment: .leading){
+                            HStack{
+                                Image(systemName: "play.circle")
+                                Text("Tout")
+                            } .tag(0)
+                            
+                            HStack{
+                                Image(systemName: "square.stack")
+                                Text("Albums")
+                            } .tag(1)
+                            
+                            HStack{
+                                Image(systemName: "music.note")
+                                Text("Morceaux")
+                            } .tag(2)
+                            
+//                            HStack{
+//                                Image(systemName: "music.note.house.fill")
+//                                Text("Concerts")
+//                            } .tag(3)
+                            
+                        } .accentColor(.orange)
+                            .accentColor(.orange)
+                            
+                            
                         
-                    }
-                    
-                    ScrollView(showsIndicators: false){
-                        
-                        VStack(alignment: .leading){
-                            Picker("Filtrer par suivi", selection: $feedFollowFilter) {
-                                Text("Tout").tag(0)
-                                Text("Suivis").tag(1)
+                        if viewModel.isLoading {
+                            ProgressView("Chargement du feed...")
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        } else {
+                                let filteredReviews = viewModel.reviews.filter { review in
+                                    switch feedTypeFilter {
+                                        case 1: // Albums
+                                            return review.album != nil && !(review.album?.isEmpty ?? true)
+                                            
+                                        case 2: // Tracks
+                                            return review.track != nil && !(review.track?.isEmpty ?? true)
+                                            
+                                        default: // Tout
+                                            return true
+                                        }
                             }
-                            .pickerStyle(.segmented)
                             
-                            Picker("Filtrer par type", selection: $feedTypeFilter) {
-                                
-                                HStack{
-                                    Image(systemName: "square.stack")
-                                    Text("Albums")
-                                } .tag(0)
-                                
-                                HStack{
-                                    Image(systemName: "music.note.house.fill")
-                                    Text("Concerts")
-                                } .tag(1)
-                                
-                                HStack{
-                                    Image(systemName: "music.note")
-                                    Text("Morceaux")
-                                } .tag(2)
-                                
-                            } .accentColor(.orange)
                             
-                            FeedCardView()
-                            FeedCardView()
-                            FeedCardView()
-                            FeedCardView()
-                            FeedCardView()
-                            FeedCardView()
-                            
-                        } .padding()
-                        
-                    }
-                    
+                            ForEach(filteredReviews) { review in
+                                FeedItemView(
+                                    review: review,
+                                    albums: albumVM.albums,
+                                    tracks: trackVM.tracks,
+                                    artists: artistVM.artists
+                                )
+                            }
+                        }
+                    } .padding()
                 }
-                .navigationTitle("Feed")
+            } .navigationTitle("Feed")
+        }
+        .task {
+
+//            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+//                return
+//            }
+
+            do {
+                try await viewModel.fetchReviews()
+                try? await albumVM.fetchAlbums()
+                try? await trackVM.fetchTracks()
+                try? await artistVM.fetchArtists()
+            } catch {
+                print("Erreur chargement feed : \(error)")
+            }
         }
     }
 }
+
+
 #Preview {
     FeedView()
 }

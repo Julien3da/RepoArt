@@ -17,6 +17,7 @@ class ReviewViewModel {
     var isPosting = false
     var error: Error?
     var success = false
+    var isLoading = false
 
     // Current User
     private let hardcodedUserId = "recwAC44d2sQ2kwql"
@@ -31,7 +32,7 @@ class ReviewViewModel {
         return request
     }
 
-    func fetchReviews(forUserId userId: String) async throws -> [Review] {
+    func fetchUserReviews(forUserId userId: String) async throws -> [Review] {
         // Airtable filterByFormula pour filtrer par user recordId
         var components = URLComponents(string: baseURL.absoluteString)!
         components.queryItems = [
@@ -52,6 +53,36 @@ class ReviewViewModel {
         }
         self.reviews = reviews
         return reviews
+    }
+  
+    func fetchReviews() async throws -> [Review] {
+
+        isLoading = true
+        defer { isLoading = false }
+
+        var request = URLRequest(url: baseURL)
+                request.httpMethod = "GET"
+                request.setValue("Bearer (apiKey)", forHTTPHeaderField: "Authorization")
+
+                let (data, _) = try await URLSession.shared.data(for: request)
+
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+
+                do {
+                    let decoded = try decoder.decode(ReviewReponse.self, from: data)
+                    let reviews = decoded.records.map { record -> Review in
+                        var review = record.fields
+                        review.id = record.id
+                        return review
+                    }
+                    self.reviews = reviews
+                    return reviews
+                } catch {
+                    print("Échec du décodage: (error)")
+                    throw error
+                }
+
     }
 
     func postReview(album: Album, mark: Int, reviewTitle: String, reviewText: String?) async {

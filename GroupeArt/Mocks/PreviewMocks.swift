@@ -1,26 +1,31 @@
-//
+
 //  PreviewMocks.swift
 //  GroupeArt
 //
 //  Created by apprenant84 on 11/03/2026.
-//
 
-//import Foundation
-//
-//
-//extension User {
-//    static let mock = User(
-//        username: "MusicFan",
-//        userPic: "userPicTest",
-//        certification: true,
-//        userLocation: "Paris",
-//        followers: 120,
-//        following: 80,
-//        countReviews: 15,
-//        bio: "Fan de musique depuis toujours"
-//    )
-//}
-//
+
+import Foundation
+
+
+extension User {
+    static let mock: User = {
+        var user = User(
+            username: "MusicFan",
+            certification: true,
+            userLocation: "Paris",
+            followers: 120,
+            following: 80,
+            countReviews: 15,
+            bio: "Fan de musique depuis toujours"
+        )
+        user.userPic = [AirtableAttachment(url: "https://picsum.photos/300",
+                                           filename: "profile.jpg",
+                                           thumbnails: nil)]
+        return user
+    }()
+}
+
 //extension Artist {
 //    static let mock = Artist(
 //        artistName: "Daft Punk",
