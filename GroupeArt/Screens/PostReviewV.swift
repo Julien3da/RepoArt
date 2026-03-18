@@ -100,9 +100,3 @@ struct PostReviewV: View {
         }
     }
 }
-
-#Preview {
-    NavigationStack {
-        PostReviewV(album: .mock)
-    }
-}

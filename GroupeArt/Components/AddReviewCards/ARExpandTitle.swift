@@ -44,6 +44,3 @@ struct ARExpandTitle: View {
     }
 }
 
-#Preview {
-    ARExpandTitle(album: .mock)
-}
