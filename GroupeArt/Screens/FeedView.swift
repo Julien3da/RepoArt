@@ -77,12 +77,12 @@ struct FeedView: View {
                                 let filteredReviews = viewModel.reviews.filter { review in
                                     switch feedTypeFilter {
                                         case 1: // Albums
-                                            return review.album != nil && !(review.album?.isEmpty ?? true)
+                                            return (review.album?.isEmpty == false)
                                             
                                         case 2: // Tracks
-                                            return review.track != nil && !(review.track?.isEmpty ?? true)
+                                            return (review.track?.isEmpty == false)
                                             
-                                        default: // Tout
+                                        default:
                                             return true
                                         }
                             }
@@ -96,6 +96,7 @@ struct FeedView: View {
                                     artists: artistVM.artists
                                 )
                             }
+                            
                         }
                     } .padding()
                 }
@@ -103,15 +104,12 @@ struct FeedView: View {
         }
         .task {
 
-//            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
-//                return
-//            }
 
             do {
-                try await viewModel.fetchReviews()
-                try? await albumVM.fetchAlbums()
-                try? await trackVM.fetchTracks()
-                try? await artistVM.fetchArtists()
+                _ = try await viewModel.fetchReviews()
+                _ = try await albumVM.fetchAlbums()
+                _ = try await trackVM.fetchTracks()
+                _ = try? await artistVM.fetchArtists()
             } catch {
                 print("Erreur chargement feed : \(error)")
             }

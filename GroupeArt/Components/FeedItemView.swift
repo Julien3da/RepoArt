@@ -31,7 +31,7 @@ struct FeedItemView: View {
             review: review,
             album: album,
             track: track,
-//            artist: artist
+            artist: artist
         )
     }
 }

@@ -11,6 +11,7 @@ struct FeedCardView: View {
     let review: Review
     let album: Album?
     let track: Track?
+    let artist: Artist?
 
     var body: some View {
         
@@ -146,6 +147,7 @@ struct FeedCardView: View {
             track: nil
         ),
         album: nil,
-        track: nil
+        track: nil,
+        artist: nil
     )
 }
