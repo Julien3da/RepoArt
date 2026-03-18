@@ -62,7 +62,7 @@ class ReviewViewModel {
 
         var request = URLRequest(url: baseURL)
                 request.httpMethod = "GET"
-                request.setValue("Bearer (apiKey)", forHTTPHeaderField: "Authorization")
+                request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
                 let (data, _) = try await URLSession.shared.data(for: request)
 
@@ -80,6 +80,7 @@ class ReviewViewModel {
                     return reviews
                 } catch {
                     print("Échec du décodage: (error)")
+                    print("❌ JSON brut :", String(data: data, encoding: .utf8) ?? "")
                     throw error
                 }
 
