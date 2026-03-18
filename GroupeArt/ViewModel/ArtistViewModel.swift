@@ -33,7 +33,6 @@ class ArtistViewModel {
             
             let artists = decoded.records.map { record -> Artist in
                 var artist = record.fields
-                artist.id = record.id
                 return artist
             } .filter { $0.artistName != "Sans titre" }
             self.artists = artists

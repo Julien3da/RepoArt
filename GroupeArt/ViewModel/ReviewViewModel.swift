@@ -48,7 +48,6 @@ class ReviewViewModel {
         let decoded = try JSONDecoder().decode(ReviewReponse.self, from: data)
         let reviews = decoded.records.map { record -> Review in
             var review = record.fields
-            review.recordId = record.id
             return review
         }
         self.reviews = reviews
@@ -73,7 +72,6 @@ class ReviewViewModel {
                     let decoded = try decoder.decode(ReviewReponse.self, from: data)
                     let reviews = decoded.records.map { record -> Review in
                         var review = record.fields
-                        review.id = record.id
                         return review
                     }
                     self.reviews = reviews
@@ -87,7 +85,7 @@ class ReviewViewModel {
     }
 
     func postReview(album: Album, mark: Int, reviewTitle: String, reviewText: String?) async {
-        guard let albumRecordId = album.recordId else {
+        guard let albumRecordId = album.airtableID else {
             print("Missing album recordId")
             return
         }

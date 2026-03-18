@@ -134,20 +134,3 @@ struct FeedCardView: View {
         }
     }
 }
-
-#Preview {
-    FeedCardView(
-        review: Review(
-            id: "previewReview",
-            reviewTitle: "Super groove",
-            markReview: 5,
-            userReview: "La ligne de basse est incroyable.",
-            usernameFromUser: ["julien"],
-            album: nil,
-            track: nil
-        ),
-        album: nil,
-        track: nil,
-        artist: nil
-    )
-}

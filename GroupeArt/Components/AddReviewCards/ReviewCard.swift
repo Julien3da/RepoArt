@@ -82,7 +82,3 @@ struct ReviewCard: View {
         .frame(width: 378)
     }
 }
-
-#Preview {
-    ReviewCard(album: .mock)
-}

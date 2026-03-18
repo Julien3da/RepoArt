@@ -27,9 +27,9 @@ struct UserReviewsList: View {
                     .foregroundStyle(.secondary)
                     .padding(.horizontal)
             } else {
-                ForEach(viewModel.reviews) { review in
-                    UserReviewRow(review: review, album: .mock)
-                }
+//                ForEach(viewModel.reviews) { review in
+//                    UserReviewRow(review: review, album: .mock)
+//                }
             }
         }
         .task {
