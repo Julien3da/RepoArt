@@ -1,27 +1,40 @@
 import SwiftUI
 
-import SwiftUI
-
 struct ContentView: View {
 
     @State private var albumVM = AlbumViewModel()
-    @State private var userMark: Int? = nil
-    var specificAlbum: Album? = nil
-    
+    var specificAlbum: Album
+    @State var trackList: [Track] = []
+
     private var displayedAlbum: Album? {
         specificAlbum ?? albumVM.randomAlbum
     }
-    
+
+    private var appBackgroundGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(red: 0.96, green: 0.92, blue: 0.85),
+                Color(red: 0.90, green: 0.86, blue: 0.80),
+                Color(red: 0.82, green: 0.82, blue: 0.82),
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
     var body: some View {
         ZStack {
-            Color(red: 0.8, green: 0.8, blue: 0.8)
+            appBackgroundGradient
                 .ignoresSafeArea()
 
             if let album = displayedAlbum {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 18) {
 
-                        if let urlString = album.coverURL, let url = URL(string: urlString) {
+                        // Cover album en grand en haut
+                        if let urlString = album.coverURL,
+                            let url = URL(string: urlString)
+                        {
                             AsyncImage(url: url) { image in
                                 ZStack {
                                     image
@@ -31,64 +44,83 @@ struct ContentView: View {
                                     Color.black.opacity(0.35)
                                 }
                             } placeholder: {
-                                Color.gray.opacity(0.3)
+                                appBackgroundGradient
                                     .overlay(ProgressView())
                             }
-                            .frame(maxWidth: .infinity, minHeight: 340, maxHeight: 340)
+                            .frame(
+                                maxWidth: .infinity,
+                                minHeight: 340,
+                                maxHeight: 340
+                            )
                             .clipped()
                         } else {
-                            Color.gray.opacity(0.3)
-                                .frame(maxWidth: .infinity, minHeight: 340, maxHeight: 340)
+                            appBackgroundGradient
+                                .frame(
+                                    maxWidth: .infinity,
+                                    minHeight: 340,
+                                    maxHeight: 340
+                                )
                                 .overlay(
                                     Image(systemName: "music.note")
                                         .font(.system(size: 60))
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(.black.opacity(0.35))
                                 )
                         }
 
                         HeaderCardView(album: album)
 
                         HStack(spacing: 12) {
-                            if let mark = userMark {
-                                ActionButtonView(
-                                    title: "",
-                                    backgroundColor: Color.orange,
-                                    textColor: .black
-                                ) {}
-                                .overlay(
-                                    HStack(spacing: 4) {
-                                        ForEach(1...5, id: \.self) { index in
-                                            Image(systemName: index <= mark ? "star.fill" : "star")
-                                                .foregroundColor(.black)
-                                                .font(.system(size: 18, weight: .bold))
-                                        }
-                                    }
-                                )
-                            } else {
-                                NavigationLink {
-                                    PostReviewV(album: album, onReviewPosted: { mark in
-                                        userMark = mark
-                                    })
-                                } label: {
-                                    Text("Ajouter un avis")
-                                        .font(.system(size: 17, weight: .bold))
-                                        .foregroundColor(.black)
-                                        .frame(maxWidth: .infinity)
-                                        .frame(height: 52)
-                                        .background(Color.orangeArt)
-                                        .clipShape(Capsule())
-                                        .shadow(color: .black.opacity(0.15), radius: 5, x: 0, y: 4)
-                                }
+                            Button(action: {}) {
+                                Text("Ajouter un avis")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.black)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 50)
+                                    .background(Color.orange)
+                                    .clipShape(Capsule())
+                                    .shadow(
+                                        color: .black.opacity(0.15),
+                                        radius: 5,
+                                        x: 0,
+                                        y: 4
+                                    )
                             }
 
-                            ActionButtonView(
-                                title: "Partager",
-                                backgroundColor: Color.black.opacity(0.8),
-                                textColor: .white) {}
+                            Button(action: {}) {
+                                Text("Partager")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 50)
+                                    .background(Color.black.opacity(0.8))
+                                    .clipShape(Capsule())
+                                    .shadow(
+                                        color: .black.opacity(0.15),
+                                        radius: 5,
+                                        x: 0,
+                                        y: 4
+                                    )
+                            }
+
+                            Button(action: {}) {
+                                Image(systemName: "list.bullet")
+                                    .font(.system(size: 20, weight: .bold))
+                                    .foregroundColor(.black)
+                                    .frame(width: 60, height: 50)
+                                    .background(Color.orange)
+                                    .clipShape(Capsule())
+                                    .shadow(
+                                        color: .black.opacity(0.15),
+                                        radius: 5,
+                                        x: 0,
+                                        y: 4
+                                    )
+                            }
                         }
                         .padding(.horizontal, 24)
 
-                        TracklistCardView(album: album) {}
+                        TracklistCardView(album: album, albumTracks: trackList)
+                        {}
 
                         ReviewsCardView(album: album)
                     }
@@ -100,77 +132,104 @@ struct ContentView: View {
             }
         }
         .task {
-            if specificAlbum == nil {
-                do {
-                    try await albumVM.fetchRandomAlbum()
-                } catch {
-                    print("Erreur: \(error)")
+
+            // Toujours charger la table Track, meme si on arrive avec un album specifique
+            if let tracks = self.specificAlbum.tracks {
+                for id in tracks {
+                    do {
+                        let t = try await albumVM.fetchTrackByID(id)
+                        self.trackList.append(t)
+                        print(t.trackTitle)
+                    } catch {
+                        print("Erreur: \(error)")
+                    }
                 }
             }
+
         }
     }
 }
 
 struct HeaderCardView: View {
     let album: Album
-    
+
+    private var appBackgroundGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(red: 0.96, green: 0.92, blue: 0.85),
+                Color(red: 0.90, green: 0.86, blue: 0.80),
+                Color(red: 0.82, green: 0.82, blue: 0.82),
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 30)
                 .fill(Color.white.opacity(0.7))
                 .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 6)
 
-            HStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text(album.albumTitle)
-                        .font(.system(size: 28, weight: .bold))
-
+                        .font(.system(size: 22, weight: .bold))
+                        .lineLimit(3)
+                        .minimumScaleFactor(0.75)
+                        .layoutPriority(1)
 
                     Text(album.artistName)
-                        .font(.system(size: 17))
-                    
-                    if let year = album.yearRelease {
-                        Text(year)
-                            .font(.system(size: 16))
-                            .foregroundColor(.black.opacity(0.65))
-                            .fontWeight(.thin)
-                    }
+                        .font(.system(size: 15))
+                        .foregroundColor(.gray)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
 
                     HStack(spacing: 6) {
                         Image(systemName: "star.fill")
                             .foregroundColor(.orange)
                         Text(String(format: "%.1f", album.globalReview))
-                            .font(.system(size: 18, weight: .bold))
+                            .font(.system(size: 16, weight: .bold))
+                    }
+                    .padding(.top, 2)
+
+                    if let year = album.yearRelease {
+                        Text(year)
+                            .font(.system(size: 14))
+                            .foregroundColor(.black.opacity(0.65))
                     }
                 }
 
-                Spacer()
+                Spacer(minLength: 0)
 
-                if let urlString = album.artistPicURL, let url = URL(string: urlString) {
+                // Photo artiste en carré à droite
+                if let urlString = album.artistPicURL,
+                    let url = URL(string: urlString)
+                {
                     AsyncImage(url: url) { image in
                         image
                             .resizable()
                             .scaledToFill()
                     } placeholder: {
-                        Color.gray.opacity(0.2)
+                        appBackgroundGradient
                             .overlay(ProgressView())
                     }
                     .frame(width: 100, height: 100)
-                    .clipShape(RoundedRectangle(cornerRadius: 28))
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
                 } else {
-                    RoundedRectangle(cornerRadius: 28)
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(width: 145, height: 145)
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.white.opacity(0.35))
+                        .frame(width: 100, height: 100)
                         .overlay(
                             Image(systemName: "person.fill")
-                                .font(.system(size: 40))
-                                .foregroundColor(.gray)
+                                .font(.system(size: 30))
+                                .foregroundColor(.black.opacity(0.35))
                         )
                 }
             }
-            .padding(24)
+            .padding(16)
         }
-        .frame(height: 175)
+        .frame(minHeight: 140)
         .padding(.horizontal, 24)
         .offset(y: -40)
         .padding(.bottom, -40)
@@ -186,7 +245,7 @@ struct ActionButtonView: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 17, weight: .bold))
+                .font(.system(size: 22, weight: .bold))
                 .foregroundColor(textColor)
                 .frame(maxWidth: .infinity)
                 .frame(height: 52)
@@ -198,12 +257,14 @@ struct ActionButtonView: View {
 }
 
 struct TracklistCardView: View {
-    let album: Album
+    var album: Album
+    let albumTracks: [Track]
     let actionVoirAlbum: () -> Void
 
+    @State private var isExpanded = false
+
     var body: some View {
-        let trackMarks = album.trackMarkFromTracks ?? []
-        
+
         ZStack {
             RoundedRectangle(cornerRadius: 30)
                 .fill(Color.white.opacity(0.72))
@@ -216,18 +277,24 @@ struct TracklistCardView: View {
                         .font(.system(size: 24, weight: .black))
                 }
 
-                if trackMarks.isEmpty {
-                    Text("Aucune track disponible")
+                if albumTracks.isEmpty {
+                    Text("Aucune track disponible pour cet album")
                         .foregroundColor(.secondary)
                 } else {
-                    ForEach(0..<min(trackMarks.count, 6), id: \.self) { index in
+                    let count = albumTracks.count
+                    let displayedCount = isExpanded ? count : min(4, count)
+
+                    ForEach(0..<displayedCount, id: \.self) { index in
+                        let track = albumTracks[index]
+
                         HStack(alignment: .top) {
                             Text("\(index + 1)")
-                                .font(.system(size: 20))
+                                .font(.system(size: 15))
                                 .frame(width: 20)
 
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Piste \(index + 1)")
+                                // Simplified logic since we are iterating valid indices
+                                Text(track.trackTitle)
                                     .font(.system(size: 19, weight: .bold))
 
                                 Text(album.artistName)
@@ -240,26 +307,56 @@ struct TracklistCardView: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "star.fill")
                                     .foregroundColor(.orange)
-                                Text("\(trackMarks[index]) / 5")
-                                    .font(.system(size: 17))
+                                if let mark = track.trackMark {
+                                    Text(" \(mark) / 5")
+                                        .font(.system(size: 17))
+                                }
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(.orange)
                             }
                         }
 
-                        if index < min(trackMarks.count, 6) - 1 {
+                        if index < displayedCount - 1 {
                             Divider()
                         }
                     }
-                }
 
-                if trackMarks.count > 6 {
-                    HStack {
-                        Spacer()
-                        Text("+ \(trackMarks.count - 6) pistes")
-                            .font(.system(size: 14))
-                            .foregroundColor(.secondary)
-                        Spacer()
+                    if count > 4 {
+                        if !isExpanded {
+                            Button(action: {
+                                withAnimation {
+                                    isExpanded = true
+                                }
+                            }) {
+                                Text("Voir tout l'album")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.black)
+                                    .padding(.vertical, 12)
+                                    .padding(.horizontal, 40)
+                                    .background(Color.orange)
+                                    .clipShape(Capsule())
+                                    .shadow(
+                                        color: .black.opacity(0.15),
+                                        radius: 4,
+                                        x: 0,
+                                        y: 2
+                                    )
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 8)
+                        } else {
+                            Button(action: {
+                                withAnimation {
+                                    isExpanded = false
+                                }
+                            }) {
+                                Text("Voir moins")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.secondary)
+                                    .padding(.top, 8)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
                     }
                 }
             }
@@ -271,13 +368,13 @@ struct TracklistCardView: View {
 
 struct ReviewsCardView: View {
     let album: Album
-    
+
     var body: some View {
         let titles = album.reviewTitleFromTopReview ?? []
         let reviews = album.userReviewFromTopReview ?? []
         let usernames = album.usernameFromTopReview ?? []
         let marks = album.markFromTopReview ?? []
-        
+
         ZStack {
             RoundedRectangle(cornerRadius: 30)
                 .fill(Color.white.opacity(0.72))
@@ -308,12 +405,16 @@ struct ReviewsCardView: View {
 
                             if index < marks.count {
                                 HStack(spacing: 2) {
-                                    ForEach(0..<Int(marks[index]), id: \.self) { _ in
+                                    ForEach(0..<Int(marks[index]), id: \.self) {
+                                        _ in
                                         Image(systemName: "star.fill")
                                             .foregroundColor(.orange)
                                             .font(.system(size: 14))
                                     }
-                                    ForEach(0..<(5 - Int(marks[index])), id: \.self) { _ in
+                                    ForEach(
+                                        0..<(5 - Int(marks[index])),
+                                        id: \.self
+                                    ) { _ in
                                         Image(systemName: "star")
                                             .foregroundColor(.orange)
                                             .font(.system(size: 14))
@@ -339,8 +440,4 @@ struct ReviewsCardView: View {
         }
         .padding(.horizontal, 24)
     }
-}
-
-#Preview {
-    ContentView()
 }

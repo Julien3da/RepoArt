@@ -16,7 +16,7 @@ struct FeedItemView: View {
     var body: some View {
 
         let album = albums.first {
-            review.album?.contains($0.id) == true
+            review.album?.contains($0.albumTitle) == true
         }
 
         let track = tracks.first {
@@ -24,7 +24,7 @@ struct FeedItemView: View {
         }
 
         let artist = artists.first {
-            track?.trackArtist?.contains($0.id) ?? false
+            track?.trackArtist?.contains($0.artistName) ?? false
         }
 
         FeedCardView(
