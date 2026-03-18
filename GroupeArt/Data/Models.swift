@@ -144,8 +144,6 @@ struct Album: Identifiable, Codable {
     var userReviewFromTopReview: [String]? = nil
     var usernameFromTopReview: [String]? = nil
     var trackMarkFromTracks: [Int]? = nil
-    var trackTitleFromTracks: [String]? = nil
-    var tracks: [String]? = nil // IDs des records Track liés, pour l'ordre
     var albumCover: [AirtableAttachment]? = nil
     var artistPictureFromArtist: [AirtableAttachment]? = nil
     
@@ -176,8 +174,6 @@ struct Album: Identifiable, Codable {
         case userReviewFromTopReview = "userReview (from topReview)"
         case usernameFromTopReview = "username (from user) (from topReview)"
         case trackMarkFromTracks = "trackMark (from tracks)"
-        case trackTitleFromTracks = "trackTitle (from tracks)"
-        case tracks // Assume field name "tracks" (lowercase) matches the lookup source
         case albumCover
         case artistPictureFromArtist = "artistPicture (from Artist)"
     }
@@ -192,8 +188,6 @@ struct Album: Identifiable, Codable {
         self.userReviewFromTopReview = try? container.decode([String].self, forKey: .userReviewFromTopReview)
         self.usernameFromTopReview = try? container.decode([String].self, forKey: .usernameFromTopReview)
         self.trackMarkFromTracks = try? container.decode([Int].self, forKey: .trackMarkFromTracks)
-        self.trackTitleFromTracks = try? container.decode([String].self, forKey: .trackTitleFromTracks)
-        self.tracks = try? container.decode([String].self, forKey: .tracks)
         self.albumCover = try? container.decode([AirtableAttachment].self, forKey: .albumCover)
         self.artistPictureFromArtist = try? container.decode([AirtableAttachment].self, forKey: .artistPictureFromArtist)
     }

@@ -25,18 +25,6 @@ class TrackViewModel {
 
                 let (data, _) = try await URLSession.shared.data(for: request)
 
-                // Debug: inspect raw JSON keys
-                do {
-                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                       let records = json["records"] as? [[String: Any]],
-                       let first = records.first,
-                       let fields = first["fields"] as? [String: Any] {
-                        print("[Debug] Track API first record fields keys: \(fields.keys)")
-                    }
-                } catch {
-                    print("[Debug] JSON parse error (Track): \(error)")
-                }
-
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
 

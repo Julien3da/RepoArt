@@ -68,95 +68,92 @@ struct ConcertFavoriteDetailView: View {
                     } else {
                         VStack(spacing: 0) {
                             ForEach(Array(filteredConcerts.enumerated()), id: \.element.id) { index, concert in
-                                NavigationLink(destination: ConcertView(concert: concert)) {
-                                    VStack(spacing: 0) {
-                                        HStack(spacing: 14) {
-                                            VStack(alignment: .leading, spacing: 4) {
-                                                Text(concert.concertTitle)
-                                                    .font(.system(size: 17, weight: .semibold))
-                                                    .foregroundColor(.primary)
+                                VStack(spacing: 0) {
+                                    HStack(spacing: 14) {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(concert.concertTitle)
+                                                .font(.system(size: 17, weight: .semibold))
+                                                .foregroundColor(.primary)
 
-                                                Text(concert.artistName)
-                                                    .font(.system(size: 14))
-                                                    .foregroundColor(.secondary)
+                                            Text(concert.artistName)
+                                                .font(.system(size: 14))
+                                                .foregroundColor(.secondary)
 
-                                                if let date = concert.concertDate {
-                                                    HStack(spacing: 4) {
-                                                        Image(systemName: "calendar")
-                                                            .font(.system(size: 12))
-                                                            .foregroundColor(.orangeArt)
-                                                        Text(date)
-                                                            .font(.system(size: 13))
-                                                            .foregroundColor(.secondary)
-                                                    }
-                                                }
-
-                                                if let location = concert.concertLocation {
-                                                    HStack(spacing: 4) {
-                                                        Image(systemName: "mappin.and.ellipse")
-                                                            .font(.system(size: 12))
-                                                            .foregroundColor(.orangeArt)
-                                                        Text(location)
-                                                            .font(.system(size: 13))
-                                                            .foregroundColor(.secondary)
-                                                    }
-                                                }
-
-                                                if let hall = concert.concertHall {
-                                                    HStack(spacing: 4) {
-                                                        Image(systemName: "building.2")
-                                                            .font(.system(size: 12))
-                                                            .foregroundColor(.orangeArt)
-                                                        Text(hall)
-                                                            .font(.system(size: 13))
-                                                            .foregroundColor(.secondary)
-                                                    }
+                                            if let date = concert.concertDate {
+                                                HStack(spacing: 4) {
+                                                    Image(systemName: "calendar")
+                                                        .font(.system(size: 12))
+                                                        .foregroundColor(.orangeArt)
+                                                    Text(date)
+                                                        .font(.system(size: 13))
+                                                        .foregroundColor(.secondary)
                                                 }
                                             }
 
-                                            Spacer()
-
-                                            // Affiche concert depuis l'API
-                                            if let urlString = concert.coverURL, let url = URL(string: urlString) {
-                                                AsyncImage(url: url) { image in
-                                                    image
-                                                        .resizable()
-                                                        .scaledToFill()
-                                                } placeholder: {
-                                                    Color.gray.opacity(0.2)
-                                                        .overlay(
-                                                            Image(systemName: "ticket")
-                                                                .font(.system(size: 22))
-                                                                .foregroundColor(.gray)
-                                                        )
+                                            if let location = concert.concertLocation {
+                                                HStack(spacing: 4) {
+                                                    Image(systemName: "mappin.and.ellipse")
+                                                        .font(.system(size: 12))
+                                                        .foregroundColor(.orangeArt)
+                                                    Text(location)
+                                                        .font(.system(size: 13))
+                                                        .foregroundColor(.secondary)
                                                 }
-                                                .frame(width: 70, height: 100)
-                                                .cornerRadius(12)
-                                            } else {
-                                                RoundedRectangle(cornerRadius: 12)
-                                                    .fill(Color.gray.opacity(0.2))
-                                                    .frame(width: 60, height: 60)
+                                            }
+
+                                            if let hall = concert.concertHall {
+                                                HStack(spacing: 4) {
+                                                    Image(systemName: "building.2")
+                                                        .font(.system(size: 12))
+                                                        .foregroundColor(.orangeArt)
+                                                    Text(hall)
+                                                        .font(.system(size: 13))
+                                                        .foregroundColor(.secondary)
+                                                }
+                                            }
+                                        }
+
+                                        Spacer()
+
+                                        // Affiche concert depuis l'API
+                                        if let urlString = concert.coverURL, let url = URL(string: urlString) {
+                                            AsyncImage(url: url) { image in
+                                                image
+                                                    .resizable()
+                                                    .scaledToFill()
+                                            } placeholder: {
+                                                Color.gray.opacity(0.2)
                                                     .overlay(
                                                         Image(systemName: "ticket")
                                                             .font(.system(size: 22))
                                                             .foregroundColor(.gray)
                                                     )
                                             }
-
-                                            Image(systemName: "chevron.right")
-                                                .font(.system(size: 14, weight: .semibold))
-                                                .foregroundColor(.secondary)
+                                            .frame(width: 70, height: 100)
+                                            .cornerRadius(12)
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color.gray.opacity(0.2))
+                                                .frame(width: 60, height: 60)
+                                                .overlay(
+                                                    Image(systemName: "ticket")
+                                                        .font(.system(size: 22))
+                                                        .foregroundColor(.gray)
+                                                )
                                         }
-                                        .padding(.horizontal, 20)
-                                        .padding(.vertical, 14)
 
-                                        if index < filteredConcerts.count - 1 {
-                                            Divider()
-                                                .padding(.horizontal, 20)
-                                        }
+                                        Image(systemName: "chevron.right")
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .padding(.horizontal, 20)
+                                    .padding(.vertical, 14)
+
+                                    if index < filteredConcerts.count - 1 {
+                                        Divider()
+                                            .padding(.horizontal, 20)
                                     }
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                         .background(
