@@ -1,10 +1,11 @@
 import SwiftUI
 
+import SwiftUI
+
 struct ContentView: View {
-    
-    
-    
+
     @State private var albumVM = AlbumViewModel()
+    @State private var userMark: Int? = nil
     var specificAlbum: Album? = nil
     
     private var displayedAlbum: Album? {
@@ -32,7 +33,6 @@ struct ContentView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 18) {
 
-                        // Cover album en grand en haut
                         if let urlString = album.coverURL, let url = URL(string: urlString) {
                             AsyncImage(url: url) { image in
                                 ZStack {
@@ -149,6 +149,7 @@ struct HeaderCardView: View {
                         .minimumScaleFactor(0.75)
                         .layoutPriority(1)
 
+
                     Text(album.artistName)
                         .font(.system(size: 15))
                         .foregroundColor(.gray)
@@ -172,7 +173,6 @@ struct HeaderCardView: View {
 
                 Spacer(minLength: 0)
 
-                // Photo artiste en carré à droite
                 if let urlString = album.artistPicURL, let url = URL(string: urlString) {
                     AsyncImage(url: url) { image in
                         image
@@ -213,7 +213,7 @@ struct ActionButtonView: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 22, weight: .bold))
+                .font(.system(size: 17, weight: .bold))
                 .foregroundColor(textColor)
                 .frame(maxWidth: .infinity)
                 .frame(height: 52)

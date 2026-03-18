@@ -42,7 +42,11 @@ class TrackViewModel {
 
                 do {
                     let decoded = try decoder.decode(TrackReponse.self, from: data)
-                    let tracks = decoded.records.map { $0.fields }
+                    let tracks = decoded.records.map { record -> Track in
+                        var track = record.fields
+                        track.id = record.id
+                        return track
+                    }
                     self.tracks = tracks
                 } catch {
                     print("Échec du décodage: \(error)")

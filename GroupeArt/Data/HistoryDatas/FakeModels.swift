@@ -2,7 +2,7 @@
 //  FakeModels.swift
 //  GroupeArt
 //
-//  Created by FUVE on 12/03/2026.
+//  Created by BlueOneThree on 12/03/2026.
 //
 
 import Foundation

@@ -2,7 +2,7 @@
 //  ArtistDetails.swift
 //  GroupeArt
 //
-//  Created by FUVE on 10/03/2026.
+//  Created by BlueOneThree on 10/03/2026.
 //
 
 import SwiftUI
@@ -51,7 +51,6 @@ struct ArtistDetails: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
-
                     // Bloc image + nom
                     VStack {
                         if let imageURL = artist.wikipediaImageURL {
@@ -76,17 +75,7 @@ struct ArtistDetails: View {
                             .fontWeight(.bold)
                     }
                     .frame(width: 325, height: 368)
-                    .background(
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 28)
-                                .fill(.ultraThinMaterial)
-                            RoundedRectangle(cornerRadius: 28)
-                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                        }
-                    )
-                    .background(Color.grisArt.opacity(0.1))
-                    .cornerRadius(28)
-                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                    .glassEffect(in: .rect(cornerRadius: 28.0))
                     .padding()
 
                     // Bio
@@ -95,7 +84,7 @@ struct ArtistDetails: View {
                             .frame(width: 325)
                             .padding(.horizontal)
                     } else {
-                        ExpandableText(text: "Écoutez mes chansons pour m'aider à me faire connaître :).")
+                        ExpandableText(text: "Pas disponible pour le moment.")
                             .frame(width: 325)
                             .padding(.horizontal)
                     }
