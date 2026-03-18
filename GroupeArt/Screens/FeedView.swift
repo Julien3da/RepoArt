@@ -37,11 +37,11 @@ struct FeedView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading) {
                         
-                        Picker("Filtrer par suivi", selection: $feedFollowFilter) {
-                            Text("Tout").tag(0)
-                            Text("Suivis").tag(1)
-                        }
-                        .pickerStyle(.segmented)
+//                        Picker("Filtrer par suivi", selection: $feedFollowFilter) {
+//                            Text("Tout").tag(0)
+//                            Text("Suivis").tag(1)
+//                        }
+//                        .pickerStyle(.segmented)
                         
                         Picker("Filtrer par type", selection: $feedTypeFilter) {
                             
@@ -87,14 +87,15 @@ struct FeedView: View {
                                         }
                             }
                             
-                            
-                            ForEach(filteredReviews) { review in
-                                FeedItemView(
-                                    review: review,
-                                    albums: albumVM.albums,
-                                    tracks: trackVM.tracks,
-                                    artists: artistVM.artists
-                                )
+                            LazyVStack {
+                                ForEach(filteredReviews) { review in
+                                    FeedItemView(
+                                        review: review,
+                                        albums: albumVM.albums,
+                                        tracks: trackVM.tracks,
+                                        artists: artistVM.artists
+                                    )
+                                }
                             }
                             
                         }
