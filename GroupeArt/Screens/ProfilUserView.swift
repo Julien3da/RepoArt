@@ -120,14 +120,17 @@ struct ProfilUserView: View {
                             HStack(spacing: 30) {
                                 VStack{
                                     Text("36k")
+                                        .font(.system(size: 16, weight: .semibold))
                                     Text("followers")
                                 }
                                 VStack{
                                     Text("46")
+                                        .font(.system(size: 16, weight: .semibold))
                                     Text("following")
                                 }
                                 VStack{
                                     Text("56")
+                                        .font(.system(size: 16, weight: .semibold))
                                     Text("Avis")
                                 }
                             }
