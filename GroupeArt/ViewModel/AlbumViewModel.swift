@@ -84,22 +84,17 @@ class AlbumViewModel {
 
                 do {
                     let decoded = try decoder.decode(AlbumReponse.self, from: data)
-                    let albums = decoded.records.compactMap { record -> Album? in
-                        var album = record.fields
-                        album.airtableID = record.id
-                        return album.albumTitle != "Sans titre" ? album : nil
-                    }
-                    self.albums = albums
-
-                    // Debug: print track titles for each album decoded
-                    for a in albums {
-                        print("[Debug] Album \(a.albumTitle) -> trackTitleFromTracks: \(a.trackTitleFromTracks ?? [])")
-                    }
-
-                    return albums
-                } catch {
-                    print("Échec du décodage: \(error)")
-                    throw error
+            let albums = decoded.records.map { record -> Album in
+                var album = record.fields
+                album.recordId = record.id
+                album.id = record.id
+                return album
+            }.filter { $0.albumTitle != "Sans titre" }
+            self.albums = albums
+            return albums
+        } catch {
+            print("Échec du décodage: \(error)")
+            throw error
                 }
     }
     

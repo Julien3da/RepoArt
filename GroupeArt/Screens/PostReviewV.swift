@@ -13,7 +13,7 @@ struct PostReviewV: View {
     let album: Album
     var onReviewPosted: ((Int) -> Void)? = nil
     @State private var showSheet = true
-    @Environment(\.dismiss) private var dismiss  // 👈 ajout
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ZStack {
@@ -84,7 +84,7 @@ struct PostReviewV: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden(true)  // 👈 cache le bouton par défaut
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {

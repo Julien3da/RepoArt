@@ -32,22 +32,32 @@ class ReviewViewModel {
         return request
     }
 
-    func fetchUserReviews(forUserId userId: String) async throws -> [Review] {
-        // Airtable filterByFormula pour filtrer par user recordId
+    func fetchUserReviews(forUsername username: String) async throws -> [Review] {
+        self.reviews = []
         var components = URLComponents(string: baseURL.absoluteString)!
         components.queryItems = [
             URLQueryItem(
                 name: "filterByFormula",
-                value: "FIND(\"\(userId)\", ARRAYJOIN(user))"
+                value: "FIND(\"\(username)\", ARRAYJOIN({User}))"
             )
         ]
         
         guard let url = components.url else { return [] }
+        
+        print("URL appelée: \(url)")
+        
         let (data, _) = try await URLSession.shared.data(for: makeRequest(url: url))
         
+        print("Raw JSON: \(String(data: data, encoding: .utf8) ?? "nil")")
+        
         let decoded = try JSONDecoder().decode(ReviewReponse.self, from: data)
+        
+        print("Reviews count: \(decoded.records.count)")
+        
         let reviews = decoded.records.map { record -> Review in
             var review = record.fields
+            review.recordId = record.id
+            review.id = record.id
             return review
         }
         self.reviews = reviews

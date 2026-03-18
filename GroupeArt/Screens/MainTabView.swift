@@ -19,6 +19,9 @@ struct MainTabView: View {
             Tab("Historique", systemImage: "music.note.list"){
                 HistoryView()
             }
+            Tab("Profil", systemImage: "person.fill"){
+                ProfilUserView()
+            }
         }
     }
 }
