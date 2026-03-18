@@ -1,8 +1,11 @@
 import SwiftUI
 
+import SwiftUI
+
 struct ContentView: View {
-    
+
     @State private var albumVM = AlbumViewModel()
+    @State private var userMark: Int? = nil
     var specificAlbum: Album? = nil
     
     private var displayedAlbum: Album? {
@@ -17,22 +20,25 @@ struct ContentView: View {
             if let album = displayedAlbum {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 18) {
-                        // Cover album en grand en haut
+
                         if let urlString = album.coverURL, let url = URL(string: urlString) {
                             AsyncImage(url: url) { image in
-                                image
-                                    .resizable()
-                                    .scaledToFill()
+                                ZStack {
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                        .scaleEffect(1.05)
+                                    Color.black.opacity(0.35)
+                                }
                             } placeholder: {
                                 Color.gray.opacity(0.3)
                                     .overlay(ProgressView())
                             }
-                            .frame(height: 320)
-                            .clipShape(RoundedRectangle(cornerRadius: 80))
+                            .frame(maxWidth: .infinity, minHeight: 340, maxHeight: 340)
+                            .clipped()
                         } else {
-                            RoundedRectangle(cornerRadius: 80)
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(height: 320)
+                            Color.gray.opacity(0.3)
+                                .frame(maxWidth: .infinity, minHeight: 340, maxHeight: 340)
                                 .overlay(
                                     Image(systemName: "music.note")
                                         .font(.system(size: 60))
@@ -43,10 +49,37 @@ struct ContentView: View {
                         HeaderCardView(album: album)
 
                         HStack(spacing: 12) {
-                            ActionButtonView(
-                                title: String(format: "Note : %.1f / 5", album.globalReview),
-                                backgroundColor: Color.orange,
-                                textColor: .black) {}
+                            if let mark = userMark {
+                                ActionButtonView(
+                                    title: "",
+                                    backgroundColor: Color.orange,
+                                    textColor: .black
+                                ) {}
+                                .overlay(
+                                    HStack(spacing: 4) {
+                                        ForEach(1...5, id: \.self) { index in
+                                            Image(systemName: index <= mark ? "star.fill" : "star")
+                                                .foregroundColor(.black)
+                                                .font(.system(size: 18, weight: .bold))
+                                        }
+                                    }
+                                )
+                            } else {
+                                NavigationLink {
+                                    PostReviewV(album: album, onReviewPosted: { mark in
+                                        userMark = mark
+                                    })
+                                } label: {
+                                    Text("Ajouter un avis")
+                                        .font(.system(size: 17, weight: .bold))
+                                        .foregroundColor(.black)
+                                        .frame(maxWidth: .infinity)
+                                        .frame(height: 52)
+                                        .background(Color.orangeArt)
+                                        .clipShape(Capsule())
+                                        .shadow(color: .black.opacity(0.15), radius: 5, x: 0, y: 4)
+                                }
+                            }
 
                             ActionButtonView(
                                 title: "Partager",
@@ -61,6 +94,7 @@ struct ContentView: View {
                     }
                     .padding(.bottom, 24)
                 }
+                .ignoresSafeArea(edges: .top)
             } else {
                 ProgressView("Chargement d'un album…")
             }
@@ -91,9 +125,16 @@ struct HeaderCardView: View {
                     Text(album.albumTitle)
                         .font(.system(size: 28, weight: .bold))
 
+
                     Text(album.artistName)
                         .font(.system(size: 17))
-                        .foregroundColor(.gray)
+                    
+                    if let year = album.yearRelease {
+                        Text(year)
+                            .font(.system(size: 16))
+                            .foregroundColor(.black.opacity(0.65))
+                            .fontWeight(.thin)
+                    }
 
                     HStack(spacing: 6) {
                         Image(systemName: "star.fill")
@@ -101,17 +142,10 @@ struct HeaderCardView: View {
                         Text(String(format: "%.1f", album.globalReview))
                             .font(.system(size: 18, weight: .bold))
                     }
-
-                    if let year = album.yearRelease {
-                        Text(year)
-                            .font(.system(size: 16))
-                            .foregroundColor(.black.opacity(0.65))
-                    }
                 }
 
                 Spacer()
 
-                // Photo artiste en carré à droite
                 if let urlString = album.artistPicURL, let url = URL(string: urlString) {
                     AsyncImage(url: url) { image in
                         image
@@ -121,7 +155,7 @@ struct HeaderCardView: View {
                         Color.gray.opacity(0.2)
                             .overlay(ProgressView())
                     }
-                    .frame(width: 145, height: 145)
+                    .frame(width: 100, height: 100)
                     .clipShape(RoundedRectangle(cornerRadius: 28))
                 } else {
                     RoundedRectangle(cornerRadius: 28)
@@ -152,7 +186,7 @@ struct ActionButtonView: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 22, weight: .bold))
+                .font(.system(size: 17, weight: .bold))
                 .foregroundColor(textColor)
                 .frame(maxWidth: .infinity)
                 .frame(height: 52)

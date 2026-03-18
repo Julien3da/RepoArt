@@ -2,15 +2,14 @@
 //  HistoryView.swift
 //  GroupeArt
 //
-//  Created by FUVE on 10/03/2026.
+//  Created by BlueOneThree on 10/03/2026.
 //
 
 import SwiftUI
 
 struct HistoryView: View {
-    
-    @State private var histoTypeFilter: Int = 1
-    
+    @State private var histoTypeFilter: Int = 0
+
     let backgroundGradient = LinearGradient(
         stops: [
             Gradient.Stop(color: .grisArt, location: 0.07),
@@ -20,49 +19,42 @@ struct HistoryView: View {
         startPoint: .top,
         endPoint: .bottom
     )
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 backgroundGradient.ignoresSafeArea()
-                
+
                 ScrollView(showsIndicators: false) {
-                    LazyVStack(alignment: .leading, pinnedViews: []) {
-                        
+                    LazyVStack(alignment: .leading) {
+
                         Picker("Filtrer par type", selection: $histoTypeFilter) {
                             HStack {
-                                Image(systemName: "square.stack")
-                                Text("Albums")
+                                Image(systemName: "music.note")
+                                Text("Morceaux")
                             }.tag(0)
-                            
+
                             HStack {
                                 Image(systemName: "music.microphone")
                                 Text("Artists")
                             }.tag(1)
-                            
-                            HStack {
-                                Image(systemName: "music.note")
-                                Text("Morceaux")
-                            }.tag(2)
                         }
                         .padding(.horizontal)
                         .padding(.bottom, 8)
-                        
+
                         switch histoTypeFilter {
                         case 0:
-                            HistoAlbum()
+                            HistoTrack()
                         case 1:
                             HistoArtist()
-                        case 2:
-                            HistoTrack()
                         default:
                             EmptyView()
                         }
                     }
                 }
-                .navigationTitle("Historique")
-                .navigationBarTitleDisplayMode(.large)
             }
+            .navigationTitle("Historique")
+            .navigationBarTitleDisplayMode(.large)
         }
     }
 }
@@ -70,5 +62,3 @@ struct HistoryView: View {
 #Preview {
     HistoryView()
 }
-
-

@@ -112,7 +112,7 @@ struct ArtistFavoriteDetailView: View {
                                         Divider()
                                             .padding(.horizontal, 20)
                                     }
-                                }
+                                } .contentShape(Rectangle())
                                 }
                                 .buttonStyle(.plain)
                             }
