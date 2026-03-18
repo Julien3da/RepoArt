@@ -27,13 +27,42 @@ class AlbumViewModel {
 
                 let (data, _) = try await URLSession.shared.data(for: request)
 
+                // Debug: inspect raw JSON keys to see how Airtable renvoie les champs liés
+                do {
+                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let records = json["records"] as? [[String: Any]],
+                       let first = records.first,
+                       let fields = first["fields"] as? [String: Any] {
+                        print("[Debug] Album API first record fields keys: \(fields.keys)")
+                        if let t = fields["trackTitle (from tracks)"] {
+                            print("[Debug] Found trackTitle (from tracks): \(t)")
+                        } else if let t2 = fields["trackTitle (from Track)"] {
+                            print("[Debug] Found trackTitle (from Track): \(t2)")
+                        } else if let t3 = fields["trackTitle (from Tracks)"] {
+                            print("[Debug] Found trackTitle (from Tracks): \(t3)")
+                        }
+                    }
+                } catch {
+                    print("[Debug] JSON parse error: \(error)")
+                }
+
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
 
                 do {
                     let decoded = try decoder.decode(AlbumReponse.self, from: data)
-                    let albums = decoded.records.map { $0.fields }.filter { $0.albumTitle != "Sans titre" }
+                    let albums = decoded.records.compactMap { record -> Album? in
+                        var album = record.fields
+                        album.airtableID = record.id
+                        return album.albumTitle != "Sans titre" ? album : nil
+                    }
                     self.albums = albums
+
+                    // Debug: print track titles for each album decoded
+                    for a in albums {
+                        print("[Debug] Album \(a.albumTitle) -> trackTitleFromTracks: \(a.trackTitleFromTracks ?? [])")
+                    }
+
                     return albums
                 } catch {
                     print("Échec du décodage: \(error)")
@@ -53,13 +82,39 @@ class AlbumViewModel {
     
     func fetchTracksForAlbum() async throws {
         let trackURL = URL(string: "https://api.airtable.com/v0/appfvBclieq9JmBZF/Track")!
-        var request = URLRequest(url: trackURL)
-        request.httpMethod = "GET"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        var allTracks: [Track] = []
+        var offset: String? = nil
         
-        let (data, _) = try await URLSession.shared.data(for: request)
-        let decoder = JSONDecoder()
-        let decoded = try decoder.decode(TrackReponse.self, from: data)
-        self.albumTracks = decoded.records.map { $0.fields }
+        repeat {
+            var components = URLComponents(url: trackURL, resolvingAgainstBaseURL: true)!
+            if let offset = offset {
+                components.queryItems = [URLQueryItem(name: "offset", value: offset)]
+            }
+            
+            var request = URLRequest(url: components.url!)
+            request.httpMethod = "GET"
+            request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+            
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let decoder = JSONDecoder()
+            
+            // Structure temporaire pour récupérer l'offset
+            struct PagedTrackResponse: Codable {
+                let records: [TrackResult]
+                let offset: String?
+            }
+            
+            let decoded = try decoder.decode(PagedTrackResponse.self, from: data)
+            let pageTracks = decoded.records.map { record -> Track in
+                var track = record.fields
+                track.airtableID = record.id
+                return track
+            }
+            allTracks.append(contentsOf: pageTracks)
+            offset = decoded.offset
+            
+        } while offset != nil
+        
+        self.albumTracks = allTracks
     }
 }
