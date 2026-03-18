@@ -8,38 +8,52 @@
 import SwiftUI
 
 struct UserReviewsList: View {
-    let userId: String  // le recordId Airtable de l'utilisateur
-    
-    @State private var viewModel = ReviewViewModel()
+    let username: String
+
+    @State private var reviewVM = ReviewViewModel()
+    @State private var albumVM = AlbumViewModel()
+    @State private var albumsById: [String: Album] = [:]
     @State private var isLoading = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Mes reviews")
-                .fontWeight(.semibold)
-                .padding(.horizontal)
-            
             if isLoading {
                 ProgressView()
                     .frame(maxWidth: .infinity)
-            } else if viewModel.reviews.isEmpty {
+            } else if reviewVM.reviews.isEmpty {
                 Text("Aucune review pour l'instant.")
                     .foregroundStyle(.secondary)
                     .padding(.horizontal)
             } else {
-                ForEach(viewModel.reviews) { review in
-                    UserReviewRow(review: review, album: .mock)
+                ForEach(reviewVM.reviews) { review in
+                    if let albumId = review.album?.first,
+                       let album = albumsById[albumId] {
+                        UserReviewRow(review: review, album: album)
+                    }
                 }
             }
         }
-        .task {
-            isLoading = true
-            do {
-                _ = try await viewModel.fetchUserReviews(forUserId: userId)
-            } catch {
-                // Optionally, handle/log error
+        .onAppear {
+            print("🔵 onAppear appelé - isLoading: \(isLoading)")
+            Task {
+                guard !isLoading else { return }
+                isLoading = true
+                reviewVM.reviews = []
+                albumsById = [:]
+                do {
+                    // ✅ séquentiel au lieu de parallèle
+                    let reviews = try await reviewVM.fetchUserReviews(forUsername: username)
+                    let albums = try await albumVM.fetchAlbums()
+                    albumsById = Dictionary(uniqueKeysWithValues: albums.compactMap { album in
+                        guard let id = album.recordId else { return nil }
+                        return (id, album)
+                    })
+                    print("✅ \(reviews.count) reviews, \(albums.count) albums")
+                } catch {
+                    print("❌ Erreur: \(error)")
+                }
+                isLoading = false
             }
-            isLoading = false
         }
     }
 }
@@ -50,7 +64,6 @@ struct UserReviewRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            // Left content
             VStack(alignment: .leading, spacing: 6) {
                 Text(album.albumTitle)
                     .fontWeight(.bold)
@@ -82,7 +95,6 @@ struct UserReviewRow: View {
 
             Spacer()
 
-            // Album cover
             if let coverURL = album.coverURL, let url = URL(string: coverURL) {
                 AsyncImage(url: url) { image in
                     image
@@ -92,7 +104,7 @@ struct UserReviewRow: View {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(.gray.opacity(0.3))
                 }
-                .frame(width: 90, height: 90)
+                .frame(width: 100, height: 100)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
@@ -103,5 +115,5 @@ struct UserReviewRow: View {
 }
 
 #Preview {
-    UserReviewsList(userId: "recwAC44d2sQ2kwql")
+    UserReviewsList(username: "julien.serdaigle")
 }

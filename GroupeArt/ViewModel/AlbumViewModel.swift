@@ -33,6 +33,7 @@ class AlbumViewModel {
             let albums = decoded.records.map { record -> Album in
                 var album = record.fields
                 album.recordId = record.id
+                album.id = record.id
                 return album
             }.filter { $0.albumTitle != "Sans titre" }
             self.albums = albums

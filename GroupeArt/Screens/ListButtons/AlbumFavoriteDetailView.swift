@@ -147,7 +147,9 @@ struct AlbumFavoriteDetailView: View {
         .searchable(text: $searchText, prompt: "Rechercher un album ou artiste")
         .task {
             do {
-                _ = try await albumVM.fetchAlbums()
+                let albums = try await albumVM.fetchAlbums()
+                print("📀 Albums chargés: \(albums.count)")
+                albums.forEach { print("  → \($0.albumTitle) - \($0.artistName)") }
             } catch {
                 print("Erreur chargement albums: \(error)")
             }
