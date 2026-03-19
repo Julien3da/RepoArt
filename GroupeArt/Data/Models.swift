@@ -60,7 +60,7 @@ struct AlbumResult: Codable {
 }
 
 struct TrackReponse: Codable {
-    let id: String
+//    let id: String
     let records: [TrackResult]
 }
 struct TrackResult: Codable {
@@ -240,6 +240,7 @@ struct Track: Identifiable, Codable {
         case trackTitle
         case trackMark
         case trackArtist
+        case linkedAlbums = "Album" //Niconni
         case albumCoverFromAlbum = "albumCover (from albumCover)"
     }
     
@@ -249,6 +250,7 @@ struct Track: Identifiable, Codable {
         self.trackMark = try container.decodeIfPresent(Int.self, forKey: .trackMark)
         self.trackArtist = try container.decodeIfPresent([String].self, forKey: .trackArtist)
         self.albumCoverFromAlbum = try? container.decode([AirtableAttachment].self, forKey: .albumCoverFromAlbum)
+        self.linkedAlbums = try? container.decode([String].self, forKey: .linkedAlbums)
     }
     
 }
