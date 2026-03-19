@@ -87,6 +87,11 @@ struct FeedView: View {
                                         }
                             }
                             
+                            FakeFeedCardView1()
+                            FakeFeedCardView2()
+                            FakeFeedCardView3()
+                            FakeFeedCardView4()
+                            
                             LazyVStack {
                                 ForEach(filteredReviews) { review in
                                     FeedItemView(

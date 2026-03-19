@@ -1,20 +1,14 @@
 //
-//  FeedCardView.swift
+//  FakeFeedCardView4.swift
 //  GroupeArt
 //
-//  Created by apprenant92 on 10/03/2026.
+//  Created by apprenant92 on 19/03/2026.
 //
 
 import SwiftUI
 
-struct FeedCardView: View {
-    let review: Review
-    let album: Album?
-    let track: Track?
-    let artist: Artist?
-
+struct FakeFeedCardView4: View {
     var body: some View {
-        
         ZStack {
             RoundedRectangle(cornerRadius: 24)
                 .fill(Color.grisArt)
@@ -30,25 +24,18 @@ struct FeedCardView: View {
                     
                     VStack(alignment: .leading) {
                         
-                        if let album {
-                            Text(album.albumTitle)
-                                .font(.title3)
-                                .bold()
-
-                            Text(album.artistName)
-                                .font(.subheadline)
-                        }
-
-                        if let track {
-                            Text(track.trackTitle)
-                                .font(.title3)
-                                .bold()
-
-                            Text(track.artistName)
-                                .font(.subheadline)
-                        }
                         
-                        Text(review.reviewTitle ?? "Aucun titre")
+                            Text("Hurry Hup Toumorrow")
+                                .font(.title3)
+                                .bold()
+
+                            Text("The Weeknd")
+                                .font(.subheadline)
+                                .padding(.bottom, 10)
+
+
+                        
+                        Text("Wowww")
                             .frame(width: 230, alignment: .leading)
                             .font(.caption)
                             .fontWeight(.bold)
@@ -56,7 +43,7 @@ struct FeedCardView: View {
                             .lineLimit(3)
                         
                                                 
-                        Text(review.userReview ?? "Aucun commentaire")
+                        Text("Trop wowwww")
                             .frame(width: 230, alignment: .leading)
                             .font(.caption)
                             .padding(.bottom, 4)
@@ -69,12 +56,12 @@ struct FeedCardView: View {
                                 .padding(.bottom, 4)
                                 .foregroundStyle(Color.orange)
                             
-                            Text("\(review.markReview ?? 0)/5")
+                            Text("5/5")
                                 .font(.subheadline)
                                 .padding(.bottom, 4)
                         }
                         
-                        Text("De \(review.username)")
+                        Text("de leasounds42")
                             .font(.caption)
                             .bold()
                         
@@ -87,30 +74,14 @@ struct FeedCardView: View {
                         HStack {
                             Spacer()
                             
-                            let cover = album?.coverURL ?? track?.coverURL
-                            
-                            if let cover,
-                               let url = URL(string: cover) {
-
-                                AsyncImage(url: url) { image in
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                } placeholder: {
-                                    ProgressView()
-                                }
+                            Image(.hutCover)
+                                .resizable()
+                                .scaledToFill()
                                 .frame(width: 100, height: 100)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                 .padding(.trailing, 18)
 
-                            } else {
-
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 100, height: 100)
-                                    .foregroundStyle(Color.gray)
-                                    .padding(.trailing, 18)
-
-                            }
+                            
                         }
                         
 //                        HStack {
@@ -135,3 +106,6 @@ struct FeedCardView: View {
     }
 }
 
+#Preview {
+    FakeFeedCardView4()
+}
