@@ -232,10 +232,10 @@ struct ProfilUserView: View {
             }
         }
         .task {
+            guard currentUser == nil else { return } // évite le double fetch
             do {
                 let users = try await userVM.fetchUsers()
                 currentUser = users.first(where: { $0.recordId == currentUserId })
-                print("currentUser chargé: \(currentUser?.username ?? "nil")")
             } catch {
                 print("Erreur chargement user: \(error)")
             }

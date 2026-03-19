@@ -24,7 +24,12 @@ class TrackViewModel {
                 request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
                 let (data, _) = try await URLSession.shared.data(for: request)
-
+        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let records = json["records"] as? [[String: Any]],
+           let first = records.first,
+           let fields = first["fields"] as? [String: Any] {
+            print("[Track fields keys]: \(fields.keys)")
+        }
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
 

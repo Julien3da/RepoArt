@@ -25,7 +25,8 @@ struct UserReviewsList: View {
                     .foregroundStyle(.secondary)
                     .padding(.horizontal)
             } else {
-                ForEach(reviewVM.reviews) { review in
+                ForEach(reviewVM.reviews, id: \.recordId) { review in
+                    let _ = print("📀 reviewId: \(review.recordId ?? review.id) | albumId: \(review.album?.first ?? "nil")")
                     if let albumId = review.album?.first,
                        let album = albumsById[albumId] {
                         UserReviewRow(review: review, album: album)
@@ -33,28 +34,24 @@ struct UserReviewsList: View {
                 }
             }
         }
-        .onAppear {
-            print("🔵 onAppear - username: \(username)")
-            print("🔵 onAppear appelé - isLoading: \(isLoading)")
-            Task {
-                guard !isLoading else { return }
-                isLoading = true
-                reviewVM.reviews = []
-                albumsById = [:]
-                do {
-                    // ✅ séquentiel au lieu de parallèle
-                    let reviews = try await reviewVM.fetchUserReviews(forUsername: username)
-                    let albums = try await albumVM.fetchAlbums()
-                    albumsById = Dictionary(uniqueKeysWithValues: albums.compactMap { album in
-                        guard let id = album.recordID else { return nil }
-                        return (id, album)
-                    })
-                    print("✅ \(reviews.count) reviews, \(albums.count) albums")
-                } catch {
-                    print("❌ Erreur: \(error)")
-                }
-                isLoading = false
+        .task(id: username) {
+            print("🔁 task triggered for: \(username)")
+            guard !username.isEmpty else { return }
+            isLoading = true
+            reviewVM.reviews = []   // reset local, on ne touche pas au VM
+            albumsById = [:]
+            do {
+                let reviews = try await reviewVM.fetchUserReviews(forUsername: username)
+                let albums = try await albumVM.fetchAlbums()
+                albumsById = Dictionary(uniqueKeysWithValues: albums.compactMap { album in
+                    guard let id = album.recordID else { return nil }
+                    return (id, album)
+                })
+                print("✅ \(reviews.count) reviews, \(albums.count) albums")
+            } catch {
+                print("❌ Erreur: \(error)")
             }
+            isLoading = false
         }
     }
 }

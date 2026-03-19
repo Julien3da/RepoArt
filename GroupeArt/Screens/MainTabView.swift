@@ -22,6 +22,11 @@ struct MainTabView: View {
             Tab("Profil", systemImage: "person.fill"){
                 ProfilUserView()
             }
+            TabSection("Recherche") {
+                Tab("Recherche", systemImage: "magnifyingglass", role: .search) {
+                    SearchView()
+                }
+            }
         }
     }
 }
