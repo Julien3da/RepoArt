@@ -34,6 +34,7 @@ struct UserReviewsList: View {
             }
         }
         .onAppear {
+            print("🔵 onAppear - username: \(username)")
             print("🔵 onAppear appelé - isLoading: \(isLoading)")
             Task {
                 guard !isLoading else { return }

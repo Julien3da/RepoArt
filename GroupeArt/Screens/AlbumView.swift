@@ -5,6 +5,7 @@ struct ContentView: View {
     @State private var albumVM = AlbumViewModel()
     var specificAlbum: Album
     @State var trackList: [Track] = []
+    @State private var userMark: Int? = nil
 
     private var displayedAlbum: Album? {
         specificAlbum ?? albumVM.randomAlbum
@@ -70,20 +71,20 @@ struct ContentView: View {
                         HeaderCardView(album: album)
 
                         HStack(spacing: 12) {
-                            Button(action: {}) {
+                           
+                            NavigationLink {
+                                PostReviewV(album: album, onReviewPosted: { mark in
+                                    userMark = mark
+                                })
+                            } label: {
                                 Text("Ajouter un avis")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(.black)
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
-                                    .frame(height: 50)
-                                    .background(Color.orange)
+                                    .frame(height: 52)
+                                    .background(Color.orangeArt)
                                     .clipShape(Capsule())
-                                    .shadow(
-                                        color: .black.opacity(0.15),
-                                        radius: 5,
-                                        x: 0,
-                                        y: 4
-                                    )
+                                    .shadow(color: .black.opacity(0.15), radius: 5, x: 0, y: 4)
                             }
 
                             Button(action: {}) {
