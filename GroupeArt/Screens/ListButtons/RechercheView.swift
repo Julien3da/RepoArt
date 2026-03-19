@@ -77,8 +77,9 @@ struct SearchView: View {
         }
     }
 
-    @State private var searchText: String = "Julien"
+    @State private var searchText: String = ""
     @State private var selectedFilter: SearchFilter = .albums
+    @FocusState private var isSearchFocused: Bool
 
     let albums: [Album]
     let artists: [Artist]
@@ -97,24 +98,33 @@ struct SearchView: View {
         self.tracks = tracks
     }
 
+    private var normalizedSearchText: String {
+        searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     private var filteredAlbums: [Album] {
-        if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if normalizedSearchText.isEmpty {
             return albums
         }
 
-        let query = searchText.lowercased()
+        let query = normalizedSearchText.lowercased()
         return albums.filter {
             $0.albumTitle.lowercased().contains(query) ||
             $0.artistName.lowercased().contains(query)
         }
     }
 
+    private var albumSuggestions: [Album] {
+        guard !normalizedSearchText.isEmpty else { return [] }
+        return Array(filteredAlbums.prefix(6))
+    }
+
     private var filteredArtists: [Artist] {
-        if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if normalizedSearchText.isEmpty {
             return artists
         }
 
-        let query = searchText.lowercased()
+        let query = normalizedSearchText.lowercased()
         return artists.filter {
             $0.artistName.lowercased().contains(query) ||
             ($0.artistDescription?.lowercased().contains(query) ?? false)
@@ -122,11 +132,11 @@ struct SearchView: View {
     }
 
     private var filteredConcerts: [Concert] {
-        if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if normalizedSearchText.isEmpty {
             return concerts
         }
 
-        let query = searchText.lowercased()
+        let query = normalizedSearchText.lowercased()
         return concerts.filter {
             $0.concertTitle.lowercased().contains(query) ||
             $0.artistName.lowercased().contains(query) ||
@@ -136,11 +146,11 @@ struct SearchView: View {
     }
 
     private var filteredTracks: [SearchTrack] {
-        if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if normalizedSearchText.isEmpty {
             return tracks
         }
 
-        let query = searchText.lowercased()
+        let query = normalizedSearchText.lowercased()
         return tracks.filter {
             $0.track.trackTitle.lowercased().contains(query) ||
             $0.album.albumTitle.lowercased().contains(query) ||
@@ -203,14 +213,63 @@ struct SearchView: View {
                     .padding(.bottom, 16)
 
                     ScrollView(showsIndicators: false) {
-                        VStack(spacing: 0) {
+                        VStack(spacing: 14) {
+
+                            // Suggestions de recherche
+                            if selectedFilter == .albums && !albumSuggestions.isEmpty {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Suggestions")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(.black)
+                                        .padding(.horizontal, 6)
+
+                                    RoundedRectangle(cornerRadius: 24)
+                                        .fill(Color.white.opacity(0.55))
+                                        .overlay {
+                                            VStack(spacing: 0) {
+                                                ForEach(Array(albumSuggestions.enumerated()), id: \.element.id) { index, album in
+                                                    NavigationLink {
+                                                        ContentView(specificAlbum: album)
+                                                    } label: {
+                                                        HStack(spacing: 12) {
+                                                            Image(systemName: "magnifyingglass")
+                                                                .foregroundColor(.gray)
+
+                                                            VStack(alignment: .leading, spacing: 2) {
+                                                                Text(album.albumTitle)
+                                                                    .font(.system(size: 16, weight: .semibold))
+                                                                    .foregroundColor(.black)
+
+                                                                Text(album.artistName)
+                                                                    .font(.system(size: 14))
+                                                                    .foregroundColor(.gray)
+                                                            }
+
+                                                            Spacer()
+                                                        }
+                                                        .padding(.horizontal, 16)
+                                                        .padding(.vertical, 12)
+                                                    }
+                                                    .buttonStyle(.plain)
+
+                                                    if index < albumSuggestions.count - 1 {
+                                                        Divider()
+                                                            .padding(.horizontal, 16)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                }
+                                .padding(.horizontal, 18)
+                            }
+
                             RoundedRectangle(cornerRadius: 28)
                                 .fill(Color.white.opacity(0.55))
                                 .overlay {
                                     VStack(spacing: 0) {
                                         if selectedFilter == .albums {
                                             if filteredAlbums.isEmpty {
-                                                Text("Aucun album trouvé")
+                                                Text(normalizedSearchText.isEmpty ? "Aucun album disponible" : "Aucun album trouvé")
                                                     .font(.system(size: 16, weight: .medium))
                                                     .foregroundColor(.secondary)
                                                     .padding(.vertical, 32)
@@ -512,10 +571,9 @@ struct SearchView: View {
                                 .padding(6)
                                 .padding(.bottom, 8)
                                 .padding(.horizontal, 18)
-                        }
-                        .padding(.horizontal, 18)
 
-                        Spacer(minLength: 100)
+                            Spacer(minLength: 100)
+                        }
                     }
 
                     HStack(spacing: 12) {
@@ -533,9 +591,20 @@ struct SearchView: View {
                             Image(systemName: "magnifyingglass")
                                 .foregroundColor(.gray)
 
-                            TextField("Rechercher", text: $searchText)
+                            TextField("Rechercher un album", text: $searchText)
                                 .textFieldStyle(.plain)
                                 .foregroundColor(.black)
+                                .focused($isSearchFocused)
+                                .submitLabel(.search)
+
+                            if !searchText.isEmpty {
+                                Button {
+                                    searchText = ""
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.gray)
+                                }
+                            }
 
                             Image(systemName: "mic.fill")
                                 .foregroundColor(.black.opacity(0.75))
@@ -555,7 +624,7 @@ struct SearchView: View {
         }
     }
 }
+
 #Preview {
     SearchView()
 }
-
