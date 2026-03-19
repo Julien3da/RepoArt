@@ -10,14 +10,19 @@ import SwiftUI
 import SwiftUI
 
 struct PostReviewV: View {
-    let album: Album
+    // Modification pour la page ConcertView (initialement: let album: Album
+    var album: Album? = nil
+    var concert: Concert? = nil
     var onReviewPosted: ((Int) -> Void)? = nil
     @State private var showSheet = true
     @Environment(\.dismiss) private var dismiss  // 👈 ajout
 
+    //Ajout pour la page ConcertView
+    private var coverURL: String? { album?.coverURL ?? concert?.coverURL }
+
     var body: some View {
         ZStack {
-            if let background = album.coverURL, let url = URL(string: background) {
+            if let background = coverURL, let url = URL(string: background) {
                 AsyncImage(url: url) { image in
                     image
                         .resizable()
@@ -32,7 +37,7 @@ struct PostReviewV: View {
             }
 
             VStack {
-                if let header = album.coverURL, let url = URL(string: header) {
+                if let header = coverURL, let url = URL(string: header) {
                     AsyncImage(url: url) { image in
                         image
                             .resizable()
@@ -60,8 +65,16 @@ struct PostReviewV: View {
             .sheet(isPresented: $showSheet) {
                 ScrollView {
                     VStack(spacing: 16) {
-                        ARExpandTitle(album: album)
-                        ReviewCard(album: album, onReviewPosted: onReviewPosted)
+//                        ARExpandTitle(album: album)
+//                        ReviewCard(album: album, onReviewPosted: onReviewPosted)
+                        // modification pour ConcertView
+                        if let album = album {
+                                                    ARExpandTitle(album: album)
+                                                    ReviewCard(album: album, onReviewPosted: onReviewPosted)
+                        } else if let concert = concert {
+                                                    ARExpandTitleConcert(concert: concert)
+                                                    ReviewCardConcert(concert: concert, onReviewPosted: onReviewPosted)
+                        }
                     }
                     .padding(.top, 18)
                     .padding(.horizontal)
@@ -70,7 +83,7 @@ struct PostReviewV: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground {
-                    if let urlString = album.coverURL, let url = URL(string: urlString) {
+                    if let urlString = coverURL, let url = URL(string: urlString) {
                         AsyncImage(url: url) { image in
                             image
                                 .resizable()

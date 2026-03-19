@@ -11,6 +11,7 @@ struct ProfilUserView: View {
     let user: User
     @State private var userVM = UserViewModel()
     @State private var showSheet = true
+    @State private var feedTypeFilter = 0
     
     struct RoundedCorner: Shape {
         var radius: CGFloat = 30
@@ -178,15 +179,35 @@ struct ProfilUserView: View {
                             backgroundColor: Color.black.opacity(0.8),
                             textColor: .white) {}
                     }.padding(16)
-                    VStack {
-                        Label("Avis", systemImage: "chevron.up.chevron.down")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading, 20)
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.orange)
-                            .padding(.top, 8)
-                            .padding(.bottom, -4)
+                    
+                    
+                    VStack(alignment: .leading) {
+                        Picker("Filtrer par type", selection: $feedTypeFilter) {
+//                            Label("Avis", systemImage: "chevron.up.chevron.down")
+//                                .frame(maxWidth: .infinity, alignment: .leading)
+//                                .padding(.leading, 20)
+//                                .font(.headline)
+//                                .fontWeight(.semibold)
+//                                .foregroundColor(.orange)
+//                                .padding(.top, 8)
+//                                .padding(.bottom, -4)
+                            
+                            HStack{
+                                Text("Avis")
+                            } .tag(0)
+                            HStack{
+                                Text("Historique")
+                            } .tag(1)
+                            HStack{
+                                Text("Listes")
+                            } .tag(2)
+
+                        }
+                        .accentColor(.orange)
+                        .padding(.leading, 20)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .offset(y: 4)
 
                         ScrollView {
                             VStack(alignment: .leading, spacing: 16) {

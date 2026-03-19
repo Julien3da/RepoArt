@@ -124,4 +124,44 @@ class ReviewViewModel {
             print("Error posting review: \(error)")
         }
     }
+    
+    // Ajout pour la page ConcertView
+        func postReview(concert: Concert, mark: Int, reviewTitle: String, reviewText: String?) async {
+            guard let concertRecordId = concert.recordId else {
+                print("Missing concert recordId")
+                return
+            }
+
+            isPosting = true
+            defer { isPosting = false }
+
+            var fields: [String: Any] = [
+                "markReview": mark,
+                "reviewTitle": reviewTitle,
+                "Concert": [concertRecordId],
+                "user": [hardcodedUserId]
+            ]
+
+            if let text = reviewText, !text.trimmingCharacters(in: .whitespaces).isEmpty {
+                fields["userReview"] = text
+            }
+
+            let body: [String: Any] = [
+                "records": [["fields": fields]]
+            ]
+
+            var request = makeRequest(url: baseURL, method: "POST")
+            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+
+            do {
+                let (_, response) = try await URLSession.shared.data(for: request)
+                if let http = response as? HTTPURLResponse {
+                    success = http.statusCode == 200
+                    if success { print("Concert review posted successfully") }
+                }
+            } catch {
+                self.error = error
+                print("Error posting concert review: \(error)")
+            }
+    }
 }

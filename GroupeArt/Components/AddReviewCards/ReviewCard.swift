@@ -83,6 +83,82 @@ struct ReviewCard: View {
     }
 }
 
+// Ajout pour ConcertView
+struct ReviewCardConcert: View {
+    let concert: Concert
+    var onReviewPosted: ((Int) -> Void)? = nil
+    @State private var mark: Int = 0
+    @State private var reviewTitle: String = ""
+    @State private var reviewText: String = ""
+    @State private var viewModel = ReviewViewModel()
+
+    private var canPost: Bool {
+        mark > 0 && !reviewTitle.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Notez le concert")
+                // MODIFICATION — texte adapté au concert
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity, alignment: .center)
+
+            HStack {
+                ForEach(1...5, id: \.self) { index in
+                    Image(systemName: index <= mark ? "star.fill" : "star")
+                        .foregroundStyle(.orangeArt)
+                        .font(.title2)
+                        .onTapGesture { mark = index }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
+
+            Divider()
+
+            TextField("Ton avis en quelques mots...", text: $reviewTitle)
+                .fontWeight(.semibold)
+
+            Divider()
+
+            HStack(alignment: .bottom) {
+                TextField("Développe ton avis", text: $reviewText, axis: .vertical)
+                    .lineLimit(3...6)
+
+                if canPost {
+                    Button {
+                        Task {
+                            let postedMark = mark
+                            // MODIFICATION — appel de la version concert de postReview
+                            await viewModel.postReview(
+                                concert: concert,
+                                mark: mark,
+                                reviewTitle: reviewTitle,
+                                reviewText: reviewText.isEmpty ? nil : reviewText
+                            )
+                            if viewModel.success {
+                                onReviewPosted?(postedMark)
+                            }
+                            reviewTitle = ""
+                            reviewText = ""
+                            mark = 0
+                        }
+                    } label: {
+                        if viewModel.isPosting {
+                            ProgressView()
+                        } else {
+                            Image(systemName: "paperplane.fill")
+                                .foregroundStyle(.orangeArt)
+                        }
+                    }
+                }
+            }
+        }
+        .padding()
+        .glassEffect(in: .rect(cornerRadius: 28.0))
+        .frame(width: 378)
+    }
+}
+
 #Preview {
     ReviewCard(album: .mock)
 }

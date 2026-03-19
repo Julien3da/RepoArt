@@ -301,9 +301,20 @@ struct Concert: Identifiable, Codable {
     var concertHall: String? = nil
     var artistNameFromArtist: [String]? = nil
     var concertCover: [AirtableAttachment]? = nil
+    var artistPictureFromArtist: [AirtableAttachment]? = nil
+    // Ajout pour la page ConcertView
+    var markFromTopReview: [Int]? = nil
+    var reviewTitleFromTopReview: [String]? = nil
+    var userReviewFromTopReview: [String]? = nil
+    var usernameFromTopReview: [String]? = nil
+
 
     var artistName: String {
         artistNameFromArtist?.first ?? "Artiste inconnu"
+    }
+    
+    var artistPicURL: String? {
+        artistPictureFromArtist?.first?.imageURL
     }
     
     var coverURL: String? {
@@ -313,6 +324,12 @@ struct Concert: Identifiable, Codable {
     private enum CodingKeys: String, CodingKey {
         case concertTitle, concertDate, concertLocation, concertHall, concertCover
         case artistNameFromArtist = "artistName (from artist)"
+        // Ajout pour la page ConcertView
+        case artistPictureFromArtist = "artistPicture (from artist)"
+        case markFromTopReview = "mark (from topReview)"
+        case reviewTitleFromTopReview = "reviewTitle (from topReview)"
+        case userReviewFromTopReview = "userReview (from topReview)"
+        case usernameFromTopReview = "username (from user) (from topReview)"
     }
     
     init(from decoder: Decoder) throws {
@@ -323,6 +340,12 @@ struct Concert: Identifiable, Codable {
         self.concertHall = try? c.decode(String.self, forKey: .concertHall)
         self.artistNameFromArtist = try? c.decode([String].self, forKey: .artistNameFromArtist)
         self.concertCover = try? c.decode([AirtableAttachment].self, forKey: .concertCover)
+        // Ajout pour la page ConcertView
+        self.artistPictureFromArtist = try? c.decode([AirtableAttachment].self, forKey: .artistPictureFromArtist)
+        self.markFromTopReview = try? c.decode([Int].self, forKey: .markFromTopReview)
+        self.reviewTitleFromTopReview = try? c.decode([String].self, forKey: .reviewTitleFromTopReview)
+        self.userReviewFromTopReview = try? c.decode([String].self, forKey: .userReviewFromTopReview)
+        self.usernameFromTopReview = try? c.decode([String].self, forKey: .usernameFromTopReview)
     }
 
     init(
@@ -330,12 +353,24 @@ struct Concert: Identifiable, Codable {
         concertDate: String? = nil,
         concertLocation: String? = nil,
         concertHall: String? = nil,
-        artistNameFromArtist: [String]? = nil
+        artistNameFromArtist: [String]? = nil,
+        // Ajout pour la page ConcertView
+        artistPictureFromArtist: [AirtableAttachment]? = nil,
+        markFromTopReview: [Int]? = nil,
+        reviewTitleFromTopReview: [String]? = nil,
+        userReviewFromTopReview: [String]? = nil,
+        usernameFromTopReview: [String]? = nil
     ) {
         self.concertTitle = concertTitle
         self.concertDate = concertDate
         self.concertLocation = concertLocation
         self.concertHall = concertHall
         self.artistNameFromArtist = artistNameFromArtist
+        // Ajout pour la page ConcertView
+        self.artistPictureFromArtist = artistPictureFromArtist
+        self.markFromTopReview = markFromTopReview
+        self.reviewTitleFromTopReview = reviewTitleFromTopReview
+        self.userReviewFromTopReview = userReviewFromTopReview
+        self.usernameFromTopReview = usernameFromTopReview
     }
 }

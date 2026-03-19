@@ -18,6 +18,9 @@ class ConcertViewModel {
    
     var concerts: [Concert] = []
     
+    // Ajout pour ConcertView
+    var randomConcert: Concert?
+    
     func fetchConcerts() async throws -> [Concert] {
         var request = URLRequest(url: baseURL)
                 request.httpMethod = "GET"
@@ -30,13 +33,22 @@ class ConcertViewModel {
 
                 do {
                     let decoded = try decoder.decode(ConcertReponse.self, from: data)
-                    let concerts = decoded.records.map { $0.fields }.filter { $0.concertTitle != "Sans titre" }
+                    let concerts = decoded.records.map { /*$0.fields*/ record -> Concert in
+                        var concert = record.fields
+                        concert.recordId = record.id
+                        return concert }.filter { $0.concertTitle != "Sans titre" }
                     self.concerts = concerts
                     return concerts
                 } catch {
                     print("Échec du décodage: \(error)")
                     throw error
                 }
-        
     }
+    func fetchRandomConcert() async throws {
+            let concerts = try await fetchConcerts()
+            let richConcerts = concerts.filter {
+                ($0.reviewTitleFromTopReview?.count ?? 0) > 0
+            }
+            self.randomConcert = richConcerts.randomElement() ?? concerts.first
+        }
 }
