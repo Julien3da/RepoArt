@@ -86,8 +86,8 @@ class AlbumViewModel {
                     let decoded = try decoder.decode(AlbumReponse.self, from: data)
             let albums = decoded.records.map { record -> Album in
                 var album = record.fields
-                album.recordId = record.id
-                album.id = record.id
+                album.recordID = record.id
+//                album.id = UUID()
                 return album
             }.filter { $0.albumTitle != "Sans titre" }
             self.albums = albums
@@ -135,7 +135,7 @@ class AlbumViewModel {
             let decoded = try decoder.decode(PagedTrackResponse.self, from: data)
             let pageTracks = decoded.records.map { record -> Track in
                 var track = record.fields
-                track.airtableID = record.id
+                track.recordID = record.id
                 return track
             }
             allTracks.append(contentsOf: pageTracks)

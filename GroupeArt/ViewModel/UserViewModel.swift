@@ -27,10 +27,9 @@ class UserViewModel {
 
         do {
             let decoded = try decoder.decode(UserReponse.self, from: data)
-        
             let users = decoded.records.map { record -> User in
                 var user = record.fields
-                user.recordId = record.id
+                user.recordId = record.id //Niconni a ajouté
                 return user
             }
             self.users = users

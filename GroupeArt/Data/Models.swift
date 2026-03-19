@@ -40,6 +40,7 @@ struct UserReponse: Codable {
     let records: [UserResult]
 }
 struct UserResult: Codable {
+    let id: String //Niconni a ajouté
     let fields: User
 }
 
@@ -54,7 +55,7 @@ struct AlbumReponse: Codable {
     let records: [AlbumResult]
 }
 struct AlbumResult: Codable {
-    let id: String
+    let id: String 
     let fields: Album
 }
 
@@ -71,6 +72,7 @@ struct ReviewReponse: Codable {
     let records: [ReviewResult]
 }
 struct ReviewResult: Codable {
+    let id: String //Niconni a ajouté
     let fields: Review
 }
 
@@ -139,7 +141,7 @@ struct Artist: Identifiable, Codable {
 
 struct Album: Identifiable, Codable {
     var id = UUID()
-    var airtableID: String? 
+    var recordID: String? 
     var albumTitle: String = "Sans titre"
     var yearRelease: String? = nil
     var artistNameFromArtist: [String]? = nil
@@ -209,7 +211,7 @@ struct Album: Identifiable, Codable {
 // MARK: - Track
 
 struct Track: Identifiable, Codable {
-    var airtableID: String? = nil
+    var recordID: String? = nil
     var id: String = ""
     let trackTitle: String
     let trackMark: Int?
