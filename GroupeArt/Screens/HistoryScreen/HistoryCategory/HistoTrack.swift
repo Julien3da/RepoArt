@@ -1,27 +1,4 @@
-////
-////  HistoAlbum.swift
-////  GroupeArt
-////
-////  Created by FUVE on 11/03/2026.
-////
-//
-//<<<<<<< HEAD:GroupeArt/Components/History/HistoAlbumCard.swift
-////import SwiftUI
-////
-////struct HistoAlbumCard: View {
-////    let album : Album
-////    
-////    var body: some View {
-////    }
-////}
-////
-////#Preview {
-////    HistoAlbumCard(album: Albums[0])
-////}
-//=======
-//import SwiftUI
-//
-//  Created by FUVE on 10/03/2026.
+//  Created by BlueOneThree on 10/03/2026.
 //
 
 import SwiftUI
@@ -38,6 +15,7 @@ struct HistoTrack: View {
                     TrackDetails(track: track)
                 } label: {
                     HistoTrackCard(track: track)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }

@@ -45,7 +45,7 @@ struct ListCard: View {
                                     Image(imageName)
                                         .resizable()
                                         .scaledToFill()
-                                        .frame(width: 72, height: 72)
+                                        .frame(width: 100, height: 100)
                                         .cornerRadius(14)
                                         .opacity(0.85)
                                 }

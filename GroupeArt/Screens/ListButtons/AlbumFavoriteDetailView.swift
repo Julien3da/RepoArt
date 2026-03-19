@@ -37,7 +37,7 @@ struct AlbumFavoriteDetailView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 32)
+                        RoundedRectangle(cornerRadius: 28)
                             .fill(Color.white.opacity(0.85))
                             .frame(width: 200, height: 200)
                             .shadow(color: .black.opacity(0.1), radius: 16, x: 0, y: 6)
@@ -129,13 +129,13 @@ struct AlbumFavoriteDetailView: View {
                                         Divider()
                                             .padding(.horizontal, 20)
                                     }
-                                }
+                                }.contentShape(Rectangle())
                                 }
                                 .buttonStyle(.plain)
                             }
                         }
                         .background(
-                            RoundedRectangle(cornerRadius: 20)
+                            RoundedRectangle(cornerRadius: 28)
                                 .fill(Color.white.opacity(0.6))
                         )
                         .padding(.horizontal, 16)
@@ -147,7 +147,9 @@ struct AlbumFavoriteDetailView: View {
         .searchable(text: $searchText, prompt: "Rechercher un album ou artiste")
         .task {
             do {
-                _ = try await albumVM.fetchAlbums()
+                let albums = try await albumVM.fetchAlbums()
+                print("📀 Albums chargés: \(albums.count)")
+                albums.forEach { print("  → \($0.albumTitle) - \($0.artistName)") }
             } catch {
                 print("Erreur chargement albums: \(error)")
             }

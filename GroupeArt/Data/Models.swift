@@ -40,6 +40,7 @@ struct UserReponse: Codable {
     let records: [UserResult]
 }
 struct UserResult: Codable {
+    let id: String //Niconni a ajouté
     let fields: User
 }
 
@@ -54,13 +55,16 @@ struct AlbumReponse: Codable {
     let records: [AlbumResult]
 }
 struct AlbumResult: Codable {
+    let id: String 
     let fields: Album
 }
 
 struct TrackReponse: Codable {
+    let id: String
     let records: [TrackResult]
 }
 struct TrackResult: Codable {
+    let id: String
     let fields: Track
 }
 
@@ -68,6 +72,7 @@ struct ReviewReponse: Codable {
     let records: [ReviewResult]
 }
 struct ReviewResult: Codable {
+    let id: String //Niconni a ajouté
     let fields: Review
 }
 
@@ -83,16 +88,18 @@ struct ConcertResult: Codable {
 
 struct User: Identifiable, Codable {
     var id = UUID()
-    let username: String
-    let certification: Bool?
-    let userLocation: String?
-    let followers: Int?
-    let following: Int?
-    let countReviews: Int?
-    let bio: String?
+    var recordId: String? = nil
+    var username: String
+    var userPic : [AirtableAttachment]?
+    var certification: Bool?
+    var userLocation: String?
+    var followers: Int?
+    var following: Int?
+    var countReviews: Int?
+    var bio: String?
 
     private enum CodingKeys: String, CodingKey {
-        case username, certification, userLocation, followers, following, countReviews, bio
+        case username, userPic, certification, userLocation, followers, following, countReviews, bio
     }
 }
 
@@ -134,6 +141,7 @@ struct Artist: Identifiable, Codable {
 
 struct Album: Identifiable, Codable {
     var id = UUID()
+    var recordID: String? 
     var albumTitle: String = "Sans titre"
     var yearRelease: String? = nil
     var artistNameFromArtist: [String]? = nil
@@ -142,6 +150,8 @@ struct Album: Identifiable, Codable {
     var userReviewFromTopReview: [String]? = nil
     var usernameFromTopReview: [String]? = nil
     var trackMarkFromTracks: [Int]? = nil
+    var trackTitleFromTracks: [String]? = nil
+    var tracks: [String]? = nil // IDs des records Track liés, pour l'ordre
     var albumCover: [AirtableAttachment]? = nil
     var artistPictureFromArtist: [AirtableAttachment]? = nil
 
@@ -172,6 +182,8 @@ struct Album: Identifiable, Codable {
         case userReviewFromTopReview = "userReview (from topReview)"
         case usernameFromTopReview = "username (from user) (from topReview)"
         case trackMarkFromTracks = "trackMark (from tracks)"
+        case trackTitleFromTracks = "trackTitle (from tracks)"
+        case tracks // Assume field name "tracks" (lowercase) matches the lookup source
         case albumCover
         case artistPictureFromArtist = "artistPicture (from Artist)"
     }
@@ -186,6 +198,8 @@ struct Album: Identifiable, Codable {
         self.userReviewFromTopReview = try? container.decode([String].self, forKey: .userReviewFromTopReview)
         self.usernameFromTopReview = try? container.decode([String].self, forKey: .usernameFromTopReview)
         self.trackMarkFromTracks = try? container.decode([Int].self, forKey: .trackMarkFromTracks)
+        self.trackTitleFromTracks = try? container.decode([String].self, forKey: .trackTitleFromTracks)
+        self.tracks = try? container.decode([String].self, forKey: .tracks)
         self.albumCover = try? container.decode([AirtableAttachment].self, forKey: .albumCover)
         self.artistPictureFromArtist = try? container.decode([AirtableAttachment].self, forKey: .artistPictureFromArtist)
     }
@@ -197,34 +211,74 @@ struct Album: Identifiable, Codable {
 // MARK: - Track
 
 struct Track: Identifiable, Codable {
-    var id = UUID()
+    var recordID: String? = nil
+    var id: String = ""
     let trackTitle: String
     let trackMark: Int?
-
-    private enum CodingKeys: String, CodingKey {
-        case trackTitle, trackMark
+    
+    let trackArtist: [String]?
+    var linkedAlbums: [String]? // IDs des albums liés (table Album)
+    let albumCoverFromAlbum: [AirtableAttachment]?
+    
+    var artistName: String {
+        guard let first = trackArtist?.first else {
+            return "Artiste inconnu"
+        }
+        
+        if first.starts(with: "rec") {
+            return "Artiste inconnu"
+        }
+        
+        return first
     }
+    
+    var coverURL: String? {
+        albumCoverFromAlbum?.first?.url
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case trackTitle
+        case trackMark
+        case trackArtist
+        case albumCoverFromAlbum = "albumCover (from albumCover)"
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.trackTitle = try container.decode(String.self, forKey: .trackTitle)
+        self.trackMark = try container.decodeIfPresent(Int.self, forKey: .trackMark)
+        self.trackArtist = try container.decodeIfPresent([String].self, forKey: .trackArtist)
+        self.albumCoverFromAlbum = try? container.decode([AirtableAttachment].self, forKey: .albumCoverFromAlbum)
+    }
+    
 }
 
 
 // MARK: - Review
 
 struct Review: Identifiable, Codable {
-    var id = UUID()
+    var recordId: String? = nil
+    var id: String = ""
     let reviewTitle: String?
     let markReview: Int?
     let userReview: String?
     let usernameFromUser: [String]?
-
+    
+    let album: [String]?
+    let track: [String]?
+    
     var username: String {
         usernameFromUser?.first ?? "Anonyme"
     }
-
+    
     private enum CodingKeys: String, CodingKey {
         case reviewTitle, markReview, userReview
         case usernameFromUser = "username (from user)"
+        case album = "Album"
+        case track = "Track"
     }
 }
+
 
 
 // MARK: - Concert

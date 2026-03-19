@@ -2,7 +2,7 @@
 //  LastFMVM.swift
 //  GroupeArt
 //
-//  Created by FUVE on 12/03/2026.
+//  Created by BlueOneThree on 12/03/2026.
 //
 
 import Foundation
@@ -20,12 +20,12 @@ import Foundation
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             let raw = String(data: data, encoding: .utf8) ?? ""
-            print("📦 Last.fm : \(raw)")
+            print("Last.fm : \(raw)")
             let decoded = try JSONDecoder().decode(LastFmResponse.self, from: data)
             self.tracks = decoded.recenttracks.track
-            print("✅ \(self.tracks.count) tracks récupérés")
+            print("\(self.tracks.count) tracks récupérés")
         } catch {
-            print("❌ Erreur : \(error)")
+            print("Erreur : \(error)")
         }
     }
 }
