@@ -234,7 +234,7 @@ struct OtherUserProfileView: View {
         OtherUserProfileView(user: User(
             username: "thefuve",
             userPic: [AirtableAttachment(
-                url: "https://v5.airtableusercontent.com/v3/u/51/51/1773849600000/pOGc3xYlIfoU89UAjzMl5Q/Gs7a9i_2sdh18Txxt6StSa8DMzJWlZWSELltIHX9KqJat-wAiVW3EkKrfeL2BxnAZW5HeKwOGo_1rIraHXL0hWpBSRRKObwA3azuz69YM_5cWOKze0kKaG_249JffByOzXUuL8rUM8RAbSKH8ZVAFg/06VOKuLucfR7EDa0N6nn4I0JD1Hb93a4VaCJvXOgmec",
+                url: "https://v5.airtableusercontent.com/v3/u/51/51/1773921600000/UXakOB9-pmc7iHSpekohHw/DGlmNABGuTv9X_KCSWqEEmxqa1fZthvRcS_2ONfGyt65qoXwp8z75QEzL3Ud-0T5XuIoaUg-MYIcN4MsByNWRimBCWbwrXNMTmdRk8afD0mkANkVnpW7paQor2sfy6ITK1jejvpLXeGzu-EE05H7sw/RAwPkszw9n0nOKXj4i0SPJ-Un9f9d_eHKC4_MlmL_HI",
                 filename: nil,
                 thumbnails: nil
             )],
