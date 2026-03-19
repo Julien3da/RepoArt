@@ -56,8 +56,8 @@ class ReviewViewModel {
         
         let reviews = decoded.records.map { record -> Review in
             var review = record.fields
-            review.recordId = record.id
-            review.id = record.id
+            review.recordId = record.id //Niconni a ajouté
+//            review.id = record.id //Niconni a ajouté
             return review
         }
         self.reviews = reviews
@@ -95,7 +95,7 @@ class ReviewViewModel {
     }
 
     func postReview(album: Album, mark: Int, reviewTitle: String, reviewText: String?) async {
-        guard let albumRecordId = album.airtableID else {
+        guard let albumRecordId = album.recordID else {
             print("Missing album recordId")
             return
         }
@@ -134,3 +134,4 @@ class ReviewViewModel {
         }
     }
 }
+

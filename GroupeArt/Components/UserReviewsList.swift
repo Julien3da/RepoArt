@@ -45,7 +45,7 @@ struct UserReviewsList: View {
                     let reviews = try await reviewVM.fetchUserReviews(forUsername: username)
                     let albums = try await albumVM.fetchAlbums()
                     albumsById = Dictionary(uniqueKeysWithValues: albums.compactMap { album in
-                        guard let id = album.recordId else { return nil }
+                        guard let id = album.recordID else { return nil }
                         return (id, album)
                     })
                     print("✅ \(reviews.count) reviews, \(albums.count) albums")
